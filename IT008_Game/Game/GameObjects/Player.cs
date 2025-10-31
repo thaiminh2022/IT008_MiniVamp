@@ -28,7 +28,7 @@ namespace IT008_Game.Game.GameObjects
             inputVector *= _speed * GameTime.DeltaTime;
             Sprite.Transform.Translate(inputVector);
 
-            if (GameInput.GetKeyDown(Keys.Space))
+            if (GameInput.GetKeyDown(Keys.Space) || GameInput.GetMouseButtonDown(MouseButtons.Left))
             {
                 var bullet = new Bullet(new Vector2(1, 0));
                 bullet.Setup(Sprite.Transform.Position);
