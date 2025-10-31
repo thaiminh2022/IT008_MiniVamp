@@ -1,16 +1,22 @@
-﻿# IT008 WinForms Game
+
+# IT008 WinForms Game
 
 A small 2D WinForms game project with scenes, audio, and basic player–bullet–enemy gameplay.
 
-## Table of Contents
-1. [Clone](#clone)
-2. [Entry point](#entry-point)
-3. [Scene switching](#scene-switching)
-4. [Audio](#audio)
-5. [Scenes, gameobjects, controls](#scenes-gameobjects-controls)
-6. [Current gameplay](#current-gameplay)
-7. [Contributing](#contributing)
-8. [Important files](#important-files)
+## TOC
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [IT008 WinForms Game](#it008-winforms-game)
+   * [📥 Clone](#-clone)
+   * [🏁 Entry point](#-entry-point)
+   * [🧭 Scene switching](#-scene-switching)
+   * [🔊 Audio](#-audio)
+   * [🧱 Scenes, gameobjects, controls](#-scenes-gameobjects-controls)
+   * [🎮 Current gameplay](#-current-gameplay)
+   * [🤝 Contributing](#-contributing)
+   * [🗂 Important files](#-important-files)
+
+<!-- TOC end -->
 
 ## 📥 Clone
 
@@ -23,7 +29,7 @@ Open the solution in **Visual Studio** and run.
 
 ## 🏁 Entry point
 
-- **Entry form / entry point:** `GameForm.cs`
+- **Entry form/entry point:** `GameForm.cs`
   - creates the main WinForms window
   - sets up input
   - starts the update/render loop
@@ -52,16 +58,16 @@ Open the solution in **Visual Studio** and run.
 
 ## 🧱 Scenes, gameobjects, controls
 
-Each scene **contains** its own gameobjects and UI controls.
+Each scene **contains** its own game objects and UI controls.
 
 - **On load** (scene starts):
   - init all UIs
-  - create all gameobjects (player, enemies, bullets list…)
-  - add controls to the form / scene
+  - create all game objects (player, enemies, bullets list…)
+  - add controls to the form/scene
 - **On unload** (scene ends):
-  - destroy / dispose all gameobjects
+  - destroy/dispose of all game objects
   - clear / remove all controls
-  - unsubscribe any events
+  - unsubscribe from any events
 
 This keeps scene switches clean (no leftover enemies or UI from previous scenes).
 
@@ -77,7 +83,7 @@ This keeps scene switches clean (no leftover enemies or UI from previous scenes)
   - Destroy player (test): **X**
   - Pause the game: **Esc**
 - **Enemy:**
-  - Can be hit by bullet
+  - Can be hit by a bullet
   - collision between **bullet ↔ enemy** is checked in **`MainGameScene`** (the scene loops over bullets and enemies and removes them on hit)
 
 ## 🤝 Contributing
@@ -111,7 +117,7 @@ This keeps scene switches clean (no leftover enemies or UI from previous scenes)
    Then on GitHub:
    - base: `master`
    - compare: `feature/<your-feature-name>`
-   - describe what you added and how to test it
+   - Describe what you added and how to test it
 
 ## 🗂 Important files
 
