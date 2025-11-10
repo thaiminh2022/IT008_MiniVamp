@@ -35,7 +35,7 @@ namespace IT008_Game.Game.Scenes
         public override void UnLoad()
         {
             // We have to clean every objects when scene exit
-            foreach(var item in EnemyList)
+            foreach (var item in EnemyList)
             {
                 item.Destroy();
             }
@@ -119,7 +119,7 @@ namespace IT008_Game.Game.Scenes
             for (int i = 0; i < EnemyList.Count; i++)
             {
                 var enemy = EnemyList[i] as Enemy;
-                
+
                 for (int j = 0; j < BulletList.Count; j++)
                 {
                     var bullet = BulletList[j] as Bullet;
@@ -131,11 +131,11 @@ namespace IT008_Game.Game.Scenes
                     }
                 }
             }
-            
+
             // BASE
             base.Update();
-            
-            
+
+
             // UI THREAD
             if (pauseMenu is not null && GameInput.GetKeyDown(Keys.Escape))
             {
@@ -144,11 +144,12 @@ namespace IT008_Game.Game.Scenes
                 if (pauseMenu.Visible == false)
                 {
                     ResumeGame();
-                }else
+                }
+                else
                 {
                     PauseGame();
                 }
-                
+
             }
 
         }

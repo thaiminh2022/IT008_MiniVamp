@@ -7,7 +7,7 @@ namespace IT008_Game.Core.Components
         public bool OneShot { get; set; }
         public float TimeLeft { get; private set; }
 
-        public bool Paused {get; private set; }
+        public bool Paused { get; private set; }
         private readonly bool _destroyOnStop;
 
         public event EventHandler<EventArgs>? Timeout;
@@ -25,7 +25,8 @@ namespace IT008_Game.Core.Components
 
 
             TimeLeft -= GameTime.DeltaTime;
-            if (TimeLeft <= 0) { 
+            if (TimeLeft <= 0)
+            {
                 Timeout?.Invoke(this, EventArgs.Empty);
                 TimeLeft = Interval;
 
@@ -51,6 +52,6 @@ namespace IT008_Game.Core.Components
         {
             Console.WriteLine("I got destroyed");
         }
-        
+
     }
 }

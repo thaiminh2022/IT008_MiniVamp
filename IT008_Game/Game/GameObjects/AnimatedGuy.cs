@@ -11,11 +11,12 @@ namespace IT008_Game.Game.GameObjects
 
             Sprite = new AnimatedSprite2D();
 
-            Sprite.AddAnimation("player/idle.png", 
-                "idle", 
-                new AnimationConfig { 
-                    TotalRow = 1, 
-                    TotalColumn = 2 
+            Sprite.AddAnimation("player/idle.png",
+                "idle",
+                new AnimationConfig
+                {
+                    TotalRow = 1,
+                    TotalColumn = 2
                 }
             );
             Sprite.AddAnimation("player/walk.png", "walk", new AnimationConfig

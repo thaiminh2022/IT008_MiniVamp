@@ -13,7 +13,7 @@ namespace IT008_Game.Core.System
         public static float TimeScale { get; set; } = 1;
         public static float Time { get; set; }
 
-        public static void Tick ()
+        public static void Tick()
         {
             // Calculating deltatime
             var now = _stopWatch.Elapsed.TotalSeconds;
@@ -27,5 +27,5 @@ namespace IT008_Game.Core.System
             Time += DeltaTime;
         }
     }
-  
+
 }

@@ -1,6 +1,4 @@
 ﻿using IT008_Game.Core.Managers;
-using System.Drawing.Drawing2D;
-using System.Numerics;
 
 namespace IT008_Game.Core.Components
 {
@@ -15,17 +13,18 @@ namespace IT008_Game.Core.Components
         public Bitmap? Texture
         {
             get { return _texture; }
-            set { 
+            set
+            {
                 _texture = value;
 
                 if (_texture is null) return;
-                
+
                 Region.Width = _texture.Width;
                 Region.Height = _texture.Height;
             }
         }
 
-        
+
         public Sprite2D(Bitmap? texture)
         {
             _texture = texture;
@@ -35,11 +34,12 @@ namespace IT008_Game.Core.Components
 
         public RectangleF GetRectangleF()
         {
-            if (Texture is null) {
+            if (Texture is null)
+            {
                 return Rectangle.Empty;
             }
 
-            return new RectangleF(Transform.Position.ToPointF(), 
+            return new RectangleF(Transform.Position.ToPointF(),
                 new SizeF(Region.Width * Transform.Scale.X, Region.Height * Transform.Scale.Y));
 
         }
@@ -57,7 +57,7 @@ namespace IT008_Game.Core.Components
     {
         public static void DrawSprite(this Graphics g, Sprite2D s)
         {
-            if (s.Texture is null) 
+            if (s.Texture is null)
                 return;
 
             g.TranslateTransform(s.Transform.Position.X, s.Transform.Position.Y);
@@ -66,8 +66,8 @@ namespace IT008_Game.Core.Components
             g.TranslateTransform(s.Transform.Pivot.X, s.Transform.Pivot.Y);
 
 
-            g.DrawImage(s.Texture, 
-                new RectangleF(0, 0, s.Region.Width, s.Region.Height), 
+            g.DrawImage(s.Texture,
+                new RectangleF(0, 0, s.Region.Width, s.Region.Height),
                 s.Region,
                 GraphicsUnit.Pixel
             );
@@ -80,7 +80,7 @@ namespace IT008_Game.Core.Components
                 using var pen = new Pen(Color.Red, 3f);
                 g.DrawRectangle(pen, s.GetRectangleF());
             }
-          
+
         }
     }
 }

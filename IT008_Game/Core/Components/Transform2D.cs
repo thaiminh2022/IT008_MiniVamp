@@ -8,10 +8,10 @@ namespace IT008_Game.Core.Components
     /// </summary>
     internal sealed class Transform2D
     {
-        public Vector2 Position = Vector2.Zero; 
-        public float RotationDeg  = 0f;
+        public Vector2 Position = Vector2.Zero;
+        public float RotationDeg = 0f;
         public Vector2 Scale = Vector2.One;
-        public Vector2 Pivot = Vector2.Zero; 
+        public Vector2 Pivot = Vector2.Zero;
 
         public void Translate(Vector2 dv)
         {
@@ -19,7 +19,8 @@ namespace IT008_Game.Core.Components
             Position.Y += dv.Y;
         }
 
-        public Matrix GetMatrix() {
+        public Matrix GetMatrix()
+        {
             var m = new Matrix();
 
             m.Translate(Position.X, Position.Y, MatrixOrder.Append);

@@ -54,6 +54,6 @@ namespace IT008_Game.Game.GameObjects
             timer1.Timeout -= Timer1_Timeout;
             base.OnDestroy();
         }
-        
+
     }
 }
