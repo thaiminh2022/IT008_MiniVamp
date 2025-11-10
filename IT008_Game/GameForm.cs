@@ -1,7 +1,8 @@
-﻿using IT008_Game.Core.System;
+﻿using IT008_Game.Core.Managers;
+using IT008_Game.Core.System;
 using IT008_Game.Game.Scenes;
+using System.Drawing.Drawing2D;
 using Timer = System.Windows.Forms.Timer;
-using IT008_Game.Core.Managers;
 
 namespace IT008_Game
 {
@@ -90,6 +91,8 @@ namespace IT008_Game
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.SmoothingMode = SmoothingMode.None;
             g.Clear(Color.CornflowerBlue);   // background
             SceneManager.SceneDraw(g);
         }
