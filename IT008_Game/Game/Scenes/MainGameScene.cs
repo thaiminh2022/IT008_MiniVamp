@@ -19,8 +19,10 @@ namespace IT008_Game.Game.Scenes
         {
             // We create the player, and enemies
             player = new();
+
             Children.AddRange([
                 player,
+                new AnimatedGuy()
             ]);
 
             EnemyList.AddRange([

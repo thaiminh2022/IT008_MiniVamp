@@ -5,6 +5,6 @@
         public static int VirtualWidth = 1280;
         public static int VirtualHeight = 720;
 
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
     }
 }
