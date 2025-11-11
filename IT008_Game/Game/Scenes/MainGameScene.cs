@@ -2,6 +2,7 @@
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
+using IT008_Game.Game.GameObjects.Boss;
 
 
 namespace IT008_Game.Game.Scenes
@@ -22,7 +23,7 @@ namespace IT008_Game.Game.Scenes
 
             Children.AddRange([
                 player,
-                new AnimatedGuy()
+                new IntroductionBoss(player),
             ]);
 
             EnemyList.AddRange([
