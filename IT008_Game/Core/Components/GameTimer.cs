@@ -1,7 +1,8 @@
 ﻿using IT008_Game.Core.System;
 namespace IT008_Game.Core.Components
 {
-    internal class GameTimer : GameObject
+    [Obsolete("Please use a timer in your code, not this")]
+    internal sealed class GameTimer : GameObject
     {
         public float Interval { get; set; }
         public bool OneShot { get; set; }

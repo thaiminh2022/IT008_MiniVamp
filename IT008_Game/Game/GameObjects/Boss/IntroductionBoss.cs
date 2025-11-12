@@ -1,9 +1,7 @@
-﻿using IT008_Game.Core;
-using IT008_Game.Core.Components;
+﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
-using System;
-using System.Drawing;
+using System.ComponentModel.Design.Serialization;
 using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss
@@ -24,131 +22,125 @@ namespace IT008_Game.Game.GameObjects.Boss
         Player _player;
 
         // Mechanics
-        GameTimer _attackTimer;
-        Random _random;
+        float startTimeBtwAttack = 3;
+        float timeBtwAttack = 3;
 
-        Attacks? _nextAttack;
-        private float _attackWindup = 0;
+        bool _attackCalled = false;
+        Animation2D _atkAnim;
 
-        // Values
-        float _speed = 100f;
-        bool _willChasePlayer = true;
+        // Stats
 
+        private float _health;
 
-        private Vector2 _dashToPos = Vector2.Zero;
+        public float Health
+        {
+            get { return _health; }
+            set { _health = value; 
+                if (_health < 0)
+                {
+                    Destroy();
+                }
+            
+            }
+        }
+
 
         // Start function
-        public IntroductionBoss(Player player) { 
+        public IntroductionBoss(Player player)
+        {
             Sprite = new AnimatedSprite2D();
 
-            Sprite.AddAnimation("player/idle.png", "idle", new AnimationConfig { 
-                TotalColumn = 2, 
-                TotalRow = 1
-            });
-            Sprite.AddAnimation("player/walk.png", "walk", new AnimationConfig
+            Sprite.AddAnimation("boss/idle.png", "idle", new AnimationConfig
             {
-                TotalColumn = 4,
+                TotalColumn = 10,
                 TotalRow = 1
             });
-            Sprite.Transform.Position = new Vector2(200, 200);
-            Sprite.Transform.Scale = new Vector2(3, 3);
+            Sprite.AddAnimation("boss/run.png", "walk", new AnimationConfig
+            {
+                TotalColumn = 16,
+                TotalRow = 1,
+            });
 
-            _random = new Random();
+            _atkAnim = Sprite.AddAnimation("boss/attack.png", "attack", new AnimationConfig
+            {
+                TotalColumn = 7,
+                FPS = 15,
+                TotalRow = 1,
+                Loop = false,
+            });
+            Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth - 50, GameManager.VirtualHeight / 2f);
+            Sprite.Transform.Scale = new Vector2(-1, 1)* 3;
+
             _player = player;
+            timeBtwAttack = startTimeBtwAttack;
 
-            _attackTimer = new GameTimer(2);
-            _attackTimer.Timeout += AttackTimer_Timeout;
-            _attackTimer.Start();
-
-            Children.Add(_attackTimer);
-
-            Sprite.Play("walk");
+            Sprite.Play("idle");
         }
 
-        private void AttackTimer_Timeout(object? sender, EventArgs e) 
-        {
-            var randAttack = _random.Next(0, 3);
-            _nextAttack = Attacks.MeleeAOE;
-            _willChasePlayer = false;
-            _attackWindup = _nextAttack switch
-            {
-                Attacks.Dash => 1,
-                Attacks.MeleeAOE => 2,
-                Attacks.RangeAOE => 2,
-                _ => throw new NotImplementedException(),
-            };
 
-            _dashToPos = _player.Sprite.Transform.Position;
-        }
-       
         // Update
         public override void Update()
         {
-            if (_willChasePlayer)
-            {
-                var playerTrasnform = _player.Sprite.Transform;
-                var dist = Vector2.Distance(playerTrasnform.Position, Sprite.Transform.Position);
+            HandleAttack();
 
-                if (dist > Sprite.Region.Width / 2f)
-                {
-                    var moveVec = (_player.Sprite.Transform.Position - Sprite.Transform.Position);
-                    Sprite.Transform.Position += Vector2.Normalize(moveVec) * _speed * GameTime.DeltaTime;
-                }
-            }
-            if (Sprite.CollidesWith(_player.Sprite))
-            {
-                // Player take damage
-                // player.health -= 1 * GameTime.DeltaTime;
-            }
-
-            if (_nextAttack is not null)
-            {
-                if (_attackWindup <= 0)
-                {
-                    // Do attack
-                    Console.WriteLine(_nextAttack);
-
-                    switch (_nextAttack)
-                    {
-                        case Attacks.Dash:
-                            Sprite.Transform.Position = _dashToPos;
-                            break;
-                        case Attacks.MeleeAOE:
-                            var sRect = Sprite.GetRectangleF();
-                            var origin = new Vector2(sRect.Width / 2, sRect.Height / 2);
-                            origin += Sprite.Transform.Position;
-
-                            var dist = Vector2.Distance(origin, _player.Sprite.Transform.Position);
-                            var attackRadius = 100f;
-                            if (dist <= attackRadius)
-                            {
-                                Console.WriteLine("player hit");
-                                // player.Heath -= x;
-                            }
-                            break;
-
-                        case Attacks.RangeAOE:
-                            // projectile = new Projectile(_player)
-                            // projectile.Sprite.Transform.Position = Sprite.Transform.Position;
-                            // Children.Add(projectile)
-                            Console.WriteLine("bullets shot");
-                            break;
-                    }
-
-                    _willChasePlayer = true;
-                    _attackTimer.Start();
-                    _nextAttack = null;
-                }else
-                {
-                    // Charging attack
-                    _attackWindup -= GameTime.DeltaTime;
-                }
-            }
-
-
-            Sprite.Update();
             // Keep this so its children will update
             base.Update();
+            Sprite.Update();
+        }
+
+        private void HandleAttack()
+        {
+            if (timeBtwAttack <= 0)
+            {
+                if (!_attackCalled)
+                {
+                    var playerY = _player.Sprite.Transform.Position.Y;
+                    var diff = playerY - Sprite.Transform.Position.Y;
+                    if (Math.Abs(diff) > 5f)
+                    {
+                        var dir = diff switch
+                        {
+                            > 0 => 1,
+                            < 0 => -1,
+                            _ => 0
+                        };
+
+                        var speed = 500f;
+                        Sprite.Transform.Translate(0, dir * speed * GameTime.DeltaTime);
+                        Sprite.Play("walk");
+
+                    }
+                    else
+                    {
+                        Sprite.Play("attack");
+                        Sprite.Transform.Position = new Vector2(Sprite.Transform.Position.X,
+                            _player.Sprite.Transform.Position.Y);
+
+                        _attackCalled = true;
+                    }
+                }
+            }
+
+            var attackFrame = 4;
+            if (_attackCalled &&
+                Sprite.CurrentFrame == attackFrame &&
+                Sprite.CurrentAnimation == _atkAnim
+            )
+            {
+                var bossSlash = new IntroductionBossSlash(_player, Sprite.Transform.Position);
+                Children.Add(bossSlash);
+                _attackCalled = false;
+                timeBtwAttack = startTimeBtwAttack;
+            }
+            else
+            {
+                if (Sprite.AnimationFinished())
+                {
+                    Sprite.Play("idle");
+                }
+
+                timeBtwAttack -= GameTime.DeltaTime;
+            }
         }
 
         // Draw
@@ -156,33 +148,9 @@ namespace IT008_Game.Game.GameObjects.Boss
         {
             g.DrawSprite(Sprite);
 
-            if (GameManager.DebugMode)
-            {
-                using var pen = new Pen(Color.Red);
-
-                // Debug attack radius
-                var sRect = Sprite.GetRectangleF();
-                var origin = new Vector2(sRect.Width / 2, sRect.Height /2);
-                origin += Sprite.Transform.Position;
-                var radius = 100f;
-                var rect = new RectangleF(origin.X - radius, origin.Y - radius, radius * 2f, radius * 2f);
-                g.DrawEllipse(pen, rect);
-
-                // Debug dash point
-                g.FillEllipse(new SolidBrush(Color.Red), 
-                    new RectangleF(_dashToPos.ToPointF(), new SizeF(10, 10)));
-            }
-
             // Keep this so its children will draw
             base.Draw(g);
         }
 
-        public override void OnDestroy()
-        {
-            _attackTimer.Timeout -= AttackTimer_Timeout;   
-            
-            
-            base.OnDestroy();
-        }
     }
 }

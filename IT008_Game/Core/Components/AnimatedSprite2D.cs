@@ -23,7 +23,22 @@ namespace IT008_Game.Core.Components
         public void Play(string animName)
         {
             // Console.WriteLine("Animation queue changed");
-            NextAnimation = Animations[animName];
+
+            if (CurrentAnimation != Animations[animName])
+                NextAnimation = Animations[animName];
+        }
+
+        /// <summary>
+        /// Check if current animation finished
+        /// </summary>
+        /// <returns>true if current animation finished</returns>
+        public bool AnimationFinished()
+        {
+            if (CurrentAnimation == null)
+                return false;
+
+            return CurrentFrame + 1 == CurrentAnimation.TotalFrame
+                    && !CurrentAnimation.Config.Loop;
         }
 
         public void Stop(bool resetFrame = false)

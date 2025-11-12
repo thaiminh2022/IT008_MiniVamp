@@ -1,4 +1,5 @@
 ﻿using IT008_Game.Core.Managers;
+using System.Numerics;
 
 namespace IT008_Game.Core.Components
 {
@@ -8,7 +9,17 @@ namespace IT008_Game.Core.Components
     internal class Sprite2D
     {
         public Transform2D Transform;
-        public RectangleF Region;
+        private RectangleF _region;
+
+        public RectangleF Region
+        {
+            get { return _region; }
+            set { _region = value;
+                var size = (_region.Size / 2f).ToVector2();
+                Transform.Pivot = size * Transform.Scale;
+            }
+        }
+
         private Bitmap? _texture;
         public Bitmap? Texture
         {
@@ -19,11 +30,13 @@ namespace IT008_Game.Core.Components
 
                 if (_texture is null) return;
 
-                Region.Width = _texture.Width;
-                Region.Height = _texture.Height;
+                _region.Width = _texture.Width;
+                _region.Height = _texture.Height;
+
+                var size = (_region.Size / 2f).ToVector2();
+                Transform.Pivot = size * Transform.Scale;
             }
         }
-
 
         public Sprite2D(Bitmap? texture)
         {
@@ -35,12 +48,25 @@ namespace IT008_Game.Core.Components
         public RectangleF GetRectangleF()
         {
             if (Texture is null)
-            {
                 return Rectangle.Empty;
-            }
 
-            return new RectangleF(Transform.Position.ToPointF(),
-                new SizeF(Region.Width * Transform.Scale.X, Region.Height * Transform.Scale.Y));
+            // Source size (unscaled)
+            float srcW = _region.Width;
+            float srcH = _region.Height;
+
+            // Actual scale (can be negative to represent flips)
+            Vector2 s = Transform.Scale;        // e.g., (-1, 1) for horizontal flip
+            float w = srcW * MathF.Abs(s.X);    // final positive width
+            float h = srcH * MathF.Abs(s.Y);    // final positive height
+
+            // Base (unscaled) anchor
+            Vector2 baseTopLeft = Transform.Position - Transform.Pivot;
+
+            // If axis is flipped (scale < 0), shift the top-left back by the full size on that axis
+            float left = baseTopLeft.X + (s.X >= 0 ? 0f : -w);
+            float top = baseTopLeft.Y + (s.Y >= 0 ? 0f : -h);
+
+            return new RectangleF(left, top, w, h);
 
         }
         public bool CollidesWith(Sprite2D s)
@@ -60,10 +86,10 @@ namespace IT008_Game.Core.Components
             if (s.Texture is null)
                 return;
 
-            g.TranslateTransform(s.Transform.Position.X, s.Transform.Position.Y);
+            var drawPos = s.Transform.Position - s.Transform.Pivot;
+            g.TranslateTransform(drawPos.X, drawPos.Y);
             g.RotateTransform(s.Transform.RotationDeg);
             g.ScaleTransform(s.Transform.Scale.X, s.Transform.Scale.Y);
-            g.TranslateTransform(s.Transform.Pivot.X, s.Transform.Pivot.Y);
 
 
             g.DrawImage(s.Texture,
@@ -79,6 +105,8 @@ namespace IT008_Game.Core.Components
             {
                 using var pen = new Pen(Color.Red, 3f);
                 g.DrawRectangle(pen, s.GetRectangleF());
+                g.FillEllipse(new SolidBrush(Color.Green), s.Transform.Position.X, s.Transform.Position.Y, 10, 10);
+                g.FillEllipse(new SolidBrush(Color.Yellow), 200, 200, 10, 10);
             }
 
         }
