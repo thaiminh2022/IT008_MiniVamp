@@ -26,7 +26,7 @@ namespace IT008_Game.Game.Scenes
             ]);
 
             EnemyList.AddRange([
-                 new Enemy()
+                 new Enemy(player)
             ]);
 
             DrawPauseMenu();
@@ -127,7 +127,7 @@ namespace IT008_Game.Game.Scenes
                     {
                         Console.WriteLine("hit");
                         bullet.Destroy();
-                        enemy.Damage();
+                        enemy.Damaged();
                     }
                 }
             }
