@@ -6,14 +6,14 @@ namespace IT008_Game.Core.Components
     {
         public readonly Dictionary<string, Animation2D> Animations;
         public Animation2D? CurrentAnimation { get; private set; }
-        public Animation2D? NextAnimation { get; private set; } 
+        public Animation2D? NextAnimation { get; private set; }
 
         public int CurrentFrame { get; private set; } = 0;
 
         private float _tickTime = 0;
         private bool _isPlaying = false;
 
-        public AnimatedSprite2D(Dictionary<string, Animation2D> animations) : base (null)
+        public AnimatedSprite2D(Dictionary<string, Animation2D> animations) : base(null)
         {
             Transform = new();
             Animations = animations;
@@ -23,7 +23,22 @@ namespace IT008_Game.Core.Components
         public void Play(string animName)
         {
             // Console.WriteLine("Animation queue changed");
-            NextAnimation = Animations[animName];
+
+            if (CurrentAnimation != Animations[animName])
+                NextAnimation = Animations[animName];
+        }
+
+        /// <summary>
+        /// Check if current animation finished
+        /// </summary>
+        /// <returns>true if current animation finished</returns>
+        public bool AnimationFinished()
+        {
+            if (CurrentAnimation == null)
+                return false;
+
+            return CurrentFrame + 1 == CurrentAnimation.TotalFrame
+                    && !CurrentAnimation.Config.Loop;
         }
 
         public void Stop(bool resetFrame = false)
@@ -64,7 +79,7 @@ namespace IT008_Game.Core.Components
             if (_tickTime <= 0)
             {
                 CurrentFrame++;
-                if (CurrentFrame + 1 == CurrentAnimation.TotalFrame 
+                if (CurrentFrame + 1 == CurrentAnimation.TotalFrame
                     && !CurrentAnimation.Config.Loop
                 )
                 {
@@ -74,7 +89,8 @@ namespace IT008_Game.Core.Components
 
                 CurrentFrame %= CurrentAnimation.TotalFrame;
                 _tickTime = CurrentAnimation.GetSecondsPerFrame();
-            }else
+            }
+            else
             {
                 _tickTime -= 1 * GameTime.DeltaTime * CurrentAnimation.Config.Speed;
             }

@@ -17,7 +17,7 @@
     internal class Animation2D
     {
         // Have to set
-        public Bitmap Texture {get; private set;}
+        public Bitmap Texture { get; private set; }
         public int TotalFrame { get; private set; }
 
         public float FrameWidth { get; private set; }

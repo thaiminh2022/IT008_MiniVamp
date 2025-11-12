@@ -28,7 +28,7 @@ namespace IT008_Game.Core.System
             form.KeyDown += (_, e) =>
             {
                 _currentKeys.Add(e.KeyData);
-               
+
             };
             form.KeyUp += (_, e) =>
             {
@@ -75,7 +75,8 @@ namespace IT008_Game.Core.System
         public static void Tick()
         {
             _previousKeys.Clear();
-            foreach (Keys key in _currentKeys) {
+            foreach (Keys key in _currentKeys)
+            {
                 _previousKeys.Add(key);
             }
 
@@ -118,7 +119,7 @@ namespace IT008_Game.Core.System
             var b = MouseBtnToInt(btn);
             if (b < 0) return false;
 
-            return  !_mouseCurrent[b] && _mousePrev[b];
+            return !_mouseCurrent[b] && _mousePrev[b];
         }
 
         public static bool GetKey(Keys k) => _currentKeys.Contains(k);
@@ -137,7 +138,7 @@ namespace IT008_Game.Core.System
             if (axis == Axis.Vertical)
             {
                 int v = 0;
-                if (GetKey(Keys.Up) || GetKey(Keys.W)) v -= 1;   
+                if (GetKey(Keys.Up) || GetKey(Keys.W)) v -= 1;
                 if (GetKey(Keys.Down) || GetKey(Keys.S)) v += 1;
                 return v;
 
@@ -145,6 +146,6 @@ namespace IT008_Game.Core.System
 
             return 0f;
         }
-    
+
     }
 }

@@ -1,5 +1,4 @@
 ﻿using IT008_Game.Core.System;
-using System.Drawing.Drawing2D;
 
 namespace IT008_Game.Core.Components
 {
@@ -10,19 +9,22 @@ namespace IT008_Game.Core.Components
         public GameObjectList Children { get; private set; } = [];
         public GameObjectList? Parent { get; set; }
 
-        public virtual void Update() {
+        public virtual void Update()
+        {
             Children.Update();
         }
-        public virtual void Draw(Graphics g) { 
+        public virtual void Draw(Graphics g)
+        {
             Children.Draw(g);
         }
 
         public virtual void OnDestroy() { }
-        public void Destroy() {
+        public void Destroy()
+        {
             if (WillDestroyNextFrame) return;
             WillDestroyNextFrame = true;
-            
-            foreach(var child in Children)
+
+            foreach (var child in Children)
             {
                 child.Destroy();
             }

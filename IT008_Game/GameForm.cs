@@ -17,14 +17,14 @@ namespace IT008_Game
             InitializeComponent();
 
             // setup form options
-            DoubleBuffered = true;  
+            DoubleBuffered = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
             // fixed game size
             ClientSize = new Size(GameManager.VirtualWidth, GameManager.VirtualHeight);
             ResizeEnd += (_, _) => KeepAspect();
 
-           // scene setups
+            // scene setups
             GameInput.Setup(this);
             SceneManager.Setup(this);
             SceneManager.ChangeScene(MainMenuScene.Name);

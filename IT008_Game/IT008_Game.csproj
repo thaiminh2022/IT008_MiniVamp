@@ -15,6 +15,10 @@
 		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\boss\" />
+  </ItemGroup>
 	
 
 </Project>
