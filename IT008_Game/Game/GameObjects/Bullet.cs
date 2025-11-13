@@ -17,6 +17,10 @@ namespace IT008_Game.Game.GameObjects
             Sprite = new Sprite2D(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );
+            Sprite.Transform.Pivot = new Vector2(
+                -Sprite.Region.Width / 2f,
+                -Sprite.Region.Height / 2f
+            );
             Sprite.Transform.Scale = new Vector2(0.3f, 0.3f);
             _moveVec = dir;
 

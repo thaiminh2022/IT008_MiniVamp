@@ -130,6 +130,10 @@ namespace IT008_Game.Game.Scenes
                         enemy.Damage();
                     }
                 }
+                if (enemy.Sprite.CollidesWith(player.Sprite))
+                {
+                    Console.WriteLine("touched");
+                }
             }
             
             // BASE

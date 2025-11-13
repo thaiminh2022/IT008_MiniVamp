@@ -14,6 +14,10 @@ namespace IT008_Game.Game.GameObjects
             Sprite = new Sprite2D(AssetsBundle.LoadImageBitmap("dino.png"));
             Sprite.Transform.Position = new Vector2(800, 200);
             Sprite.Transform.Scale = new Vector2(0.5f, 0.5f);
+            Sprite.Transform.Pivot = new Vector2(
+                -Sprite.Region.Width / 2f,
+                -Sprite.Region.Height / 2f
+            );
         }
 
         public void Damage()

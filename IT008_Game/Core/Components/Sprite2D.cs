@@ -35,13 +35,12 @@ namespace IT008_Game.Core.Components
 
         public RectangleF GetRectangleF()
         {
-            if (Texture is null) {
-                return Rectangle.Empty;
-            }
-
-            return new RectangleF(Transform.Position.ToPointF(), 
-                new SizeF(Region.Width * Transform.Scale.X, Region.Height * Transform.Scale.Y));
-
+            return new RectangleF(
+                Transform.Position.X - (Region.Width * Math.Abs(Transform.Scale.X) / 2f),
+                Transform.Position.Y - (Region.Height * Math.Abs(Transform.Scale.Y) / 2f),
+                Region.Width * Math.Abs(Transform.Scale.X),
+                Region.Height * Math.Abs(Transform.Scale.Y)
+            );
         }
         public bool CollidesWith(Sprite2D s)
         {
