@@ -27,12 +27,12 @@ namespace IT008_Game.Core.System
 
             form.KeyDown += (_, e) =>
             {
-                _currentKeys.Add(e.KeyData);
+                _currentKeys.Add(e.KeyCode);
 
             };
             form.KeyUp += (_, e) =>
             {
-                _currentKeys.Remove(e.KeyData);
+                _currentKeys.Remove(e.KeyCode);
             };
 
             form.Deactivate += (_, _) =>
