@@ -3,6 +3,7 @@ using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
 using IT008_Game.Game.GameObjects.Boss;
+using IT008_Game.Game.GameObjects.Spawner;
 
 
 namespace IT008_Game.Game.Scenes
@@ -20,15 +21,18 @@ namespace IT008_Game.Game.Scenes
         {
             // We create the player, and enemies
             player = new();
+            var spawner = new EnemySpawner(player);
 
             Children.AddRange([
                 player,
-                new IntroductionBoss(player),
+                spawner,
             ]);
 
             EnemyList.AddRange([
                  new Enemy()
             ]);
+
+            spawner.NextWave();
 
             DrawPauseMenu();
         }
