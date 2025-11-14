@@ -137,6 +137,7 @@ namespace IT008_Game.Game.Scenes
                 }
             }
 
+
             // BASE
             base.Update();
 
