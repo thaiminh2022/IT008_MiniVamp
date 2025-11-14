@@ -48,5 +48,6 @@ namespace IT008_Game.Game.GameObjects
             g.DrawSprite(Sprite);
             base.Draw(g);
         }
+
     }
 }

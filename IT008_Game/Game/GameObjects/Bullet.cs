@@ -8,12 +8,14 @@ namespace IT008_Game.Game.GameObjects
     internal class Bullet : GameObject
     {
         public readonly Sprite2D Sprite;
-        float _bulletSpeed = 1500f;
+        float _bulletSpeed;
         Vector2 _moveVec;
 
         GameTimer timer1;
-        public Bullet(Vector2 dir)
+        public Bullet(Vector2 dir,float speed = 1500f)
         {
+            _bulletSpeed = speed;
+
             Sprite = new Sprite2D(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );

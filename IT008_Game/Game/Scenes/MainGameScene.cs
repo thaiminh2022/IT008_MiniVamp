@@ -25,7 +25,6 @@ namespace IT008_Game.Game.Scenes
             // We create the player, and enemies
             player = new();
             enemySpawner = new EnemySpawner(player);
-            Children.Add(enemySpawner);
 
 
             Children.AddRange([
@@ -33,9 +32,9 @@ namespace IT008_Game.Game.Scenes
                 enemySpawner,
             ]);
 
-            EnemyList.AddRange([
-                 new Enemy(player)
-            ]);
+            //EnemyList.AddRange([
+            //     new Enemy(player)
+            //]);
 
             enemySpawner.NextWave();
 
@@ -124,10 +123,11 @@ namespace IT008_Game.Game.Scenes
             {
                 player?.Destroy();
             }
-            if (GameInput.GetKeyDown(Keys.N))
-            {
-                enemySpawner.NextWave();
-            }
+
+            //anything to do with spawning waves
+            enemySpawner.Update();
+
+
             EnemyList.Update();
             BulletList.Update();
             EnemyBulletList.Update();

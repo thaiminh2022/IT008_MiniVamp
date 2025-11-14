@@ -9,37 +9,37 @@ namespace IT008_Game.Game.GameObjects
 {
     internal class Enemy : GameObject
     {
-        public readonly Sprite2D Sprite;
+        public Sprite2D Sprite;
         public int MaxHealth = 10;
         public int CurrentHealth;
         public int Damage = 1;
-        public float MovementSpeed = 150f;
-        public short EnemyID;
+        public float MovementSpeed = 50f;
+        public short EnemyID = 0;
 
         //spawn multiple enemies vs single hard enemy
-        public int EnemyWeight;
+        public int EnemyWeight = 2;
 
         //AimingDirection
         private Vector2 AimingDirection = Vector2.Zero;
 
         //enemy attack cooldown
         private float ChargeTimer = 0f;
-        public float ChargeTime = 1f; 
+        public float ChargeTime = 3f; 
 
         //number off time enemy use attack when attacking
-        public int AtkNum = 20;
+        public int AtkNum = 5;
         private int AtkCount = 0;
 
         //time between each attack
         private float AtkTimer = 0f;
-        public float AtkTime = 0.05f;
+        public float AtkTime = 0.3f;
 
         //player target
         private Sprite2D _target;
 
-        public Enemy(Player ChaseTarget)
+        public Enemy(Player? ChaseTarget,float Difficulty = 1f)
         {
-            _target = ChaseTarget.Sprite;
+             _target = ChaseTarget.Sprite;
             CurrentHealth = MaxHealth;
 
             int size = 100;
@@ -55,6 +55,8 @@ namespace IT008_Game.Game.GameObjects
             Sprite.Transform.Position = new Vector2(800, 200);
             Sprite.Transform.Scale = new Vector2(0.5f, 0.5f);
         }
+
+        
 
         public void Damaged()
         {
@@ -97,7 +99,7 @@ namespace IT008_Game.Game.GameObjects
         public override void Update()
         {
             ClockWork();
-            //LinearChase(_target);
+            if (ChargeTimer <= ChargeTime) LinearChase();
            
             if (CurrentHealth < 0)
             {
@@ -130,7 +132,7 @@ namespace IT008_Game.Game.GameObjects
         {
             
             Vector2 ShootDirection = GameMathConverter.Rotate(AimingDirection,0);
-            var bullet = new Bullet(ShootDirection);
+            var bullet = new Bullet(ShootDirection,200);
             bullet.Setup(Sprite.Transform.Position + 50 * ShootDirection);
             if (SceneManager.CurrentScene is MainGameScene mg)
             {
