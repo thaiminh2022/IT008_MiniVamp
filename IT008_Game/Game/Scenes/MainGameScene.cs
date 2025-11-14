@@ -15,6 +15,8 @@ namespace IT008_Game.Game.Scenes
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
 
+        public GameObjectList EnemyBulletList { get; private set; } = [];
+
         public override void Load()
         {
             // We create the player, and enemies
@@ -40,6 +42,10 @@ namespace IT008_Game.Game.Scenes
                 item.Destroy();
             }
             foreach (var item in BulletList)
+            {
+                item.Destroy();
+            }
+            foreach (var item in EnemyBulletList)
             {
                 item.Destroy();
             }
@@ -113,6 +119,7 @@ namespace IT008_Game.Game.Scenes
 
             EnemyList.Update();
             BulletList.Update();
+            EnemyBulletList.Update();
 
 
             // EXAMPLE BULLET COLLISION
@@ -156,6 +163,7 @@ namespace IT008_Game.Game.Scenes
         {
             EnemyList.Draw(g);
             BulletList.Draw(g);
+            EnemyBulletList.Draw(g);
 
             base.Draw(g);
         }
