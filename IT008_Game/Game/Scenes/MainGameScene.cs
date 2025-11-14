@@ -13,6 +13,7 @@ namespace IT008_Game.Game.Scenes
         public static new string Name => "Game";
         TableLayoutPanel? pauseMenu;
         Player? player;
+        public EnemySpawner? enemySpawner;
 
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
@@ -21,18 +22,20 @@ namespace IT008_Game.Game.Scenes
         {
             // We create the player, and enemies
             player = new();
-            var spawner = new EnemySpawner(player);
+            enemySpawner = new EnemySpawner(player);
+            Children.Add(enemySpawner);
+
 
             Children.AddRange([
                 player,
-                spawner,
+                enemySpawner,
             ]);
 
             EnemyList.AddRange([
                  new Enemy()
             ]);
 
-            spawner.NextWave();
+            enemySpawner.NextWave();
 
             DrawPauseMenu();
         }
@@ -115,11 +118,14 @@ namespace IT008_Game.Game.Scenes
             {
                 player?.Destroy();
             }
-
+            if (GameInput.GetKeyDown(Keys.N))
+            {
+                enemySpawner.NextWave();
+            }
             EnemyList.Update();
             BulletList.Update();
 
-
+            
             // EXAMPLE BULLET COLLISION
             for (int i = 0; i < EnemyList.Count; i++)
             {
