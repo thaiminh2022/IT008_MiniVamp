@@ -1,5 +1,4 @@
 ﻿using IT008_Game.Core.System;
-using System.CodeDom;
 
 namespace IT008_Game.Core.Components
 {
@@ -16,7 +15,8 @@ namespace IT008_Game.Core.Components
         public abstract void Load();
         public virtual void UnLoad()
         {
-            foreach (var child in Children) {
+            foreach (var child in Children)
+            {
                 child.Destroy();
             }
             Controls.Clear();
@@ -30,7 +30,7 @@ namespace IT008_Game.Core.Components
         {
             Children.Draw(g);
         }
-        
+
     }
 
 }

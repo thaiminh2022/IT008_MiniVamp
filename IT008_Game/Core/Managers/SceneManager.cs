@@ -36,7 +36,7 @@ namespace IT008_Game.Core.Managers
         /// </summary>
         /// <param name="sceneName">The scene it's loading, please try using the Name property of scene</param>
         /// <returns>true if sucess, false if not</returns>
-        public static bool ChangeScene(string sceneName) 
+        public static bool ChangeScene(string sceneName)
         {
             if (_mainForm == null) return false;
 
@@ -55,7 +55,7 @@ namespace IT008_Game.Core.Managers
             CurrentScene = scene;
             CurrentScene.Load();
 
-            _mainForm.Controls.AddRange([..scene.Controls]);
+            _mainForm.Controls.AddRange([.. scene.Controls]);
             _mainForm.Text = sceneName;
             _mainForm.Focus();
 
@@ -65,7 +65,7 @@ namespace IT008_Game.Core.Managers
 
         public static void RestartCurrentScene()
         {
-            if (CurrentScene is null || _mainForm is null) 
+            if (CurrentScene is null || _mainForm is null)
                 return;
 
             _mainForm.Controls.Clear();

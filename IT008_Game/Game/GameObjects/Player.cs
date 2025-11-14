@@ -11,8 +11,9 @@ namespace IT008_Game.Game.GameObjects
         public readonly Sprite2D Sprite;
         private float _speed = 200f;
 
-        public Player() {
-            Sprite = new (
+        public Player()
+        {
+            Sprite = new(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );
             Sprite.Transform.Position = new Vector2(100, 100);
@@ -22,7 +23,7 @@ namespace IT008_Game.Game.GameObjects
 
         public override void Update()
         {
-            var inputVector = new Vector2(GameInput.GetAxis(Axis.Horizontal), 
+            var inputVector = new Vector2(GameInput.GetAxis(Axis.Horizontal),
                 GameInput.GetAxis(Axis.Vertical));
 
             inputVector *= _speed * GameTime.DeltaTime;

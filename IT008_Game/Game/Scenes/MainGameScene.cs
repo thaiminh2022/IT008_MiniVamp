@@ -2,6 +2,8 @@
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
+using IT008_Game.Game.GameObjects.Boss;
+using IT008_Game.Game.GameObjects.Spawner;
 
 
 namespace IT008_Game.Game.Scenes
@@ -11,6 +13,7 @@ namespace IT008_Game.Game.Scenes
         public static new string Name => "Game";
         TableLayoutPanel? pauseMenu;
         Player? player;
+        public EnemySpawner? enemySpawner;
 
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
@@ -21,15 +24,20 @@ namespace IT008_Game.Game.Scenes
         {
             // We create the player, and enemies
             player = new();
+            enemySpawner = new EnemySpawner(player);
+            Children.Add(enemySpawner);
+
 
             Children.AddRange([
                 player,
-                new AnimatedGuy()
+                enemySpawner,
             ]);
 
             EnemyList.AddRange([
                  new Enemy(player)
             ]);
+
+            enemySpawner.NextWave();
 
             DrawPauseMenu();
         }
@@ -37,7 +45,7 @@ namespace IT008_Game.Game.Scenes
         public override void UnLoad()
         {
             // We have to clean every objects when scene exit
-            foreach(var item in EnemyList)
+            foreach (var item in EnemyList)
             {
                 item.Destroy();
             }
@@ -116,17 +124,20 @@ namespace IT008_Game.Game.Scenes
             {
                 player?.Destroy();
             }
-
+            if (GameInput.GetKeyDown(Keys.N))
+            {
+                enemySpawner.NextWave();
+            }
             EnemyList.Update();
             BulletList.Update();
             EnemyBulletList.Update();
 
-
+            
             // EXAMPLE BULLET COLLISION
             for (int i = 0; i < EnemyList.Count; i++)
             {
                 var enemy = EnemyList[i] as Enemy;
-                
+
                 for (int j = 0; j < BulletList.Count; j++)
                 {
                     var bullet = BulletList[j] as Bullet;
@@ -138,11 +149,11 @@ namespace IT008_Game.Game.Scenes
                     }
                 }
             }
-            
+
             // BASE
             base.Update();
-            
-            
+
+
             // UI THREAD
             if (pauseMenu is not null && GameInput.GetKeyDown(Keys.Escape))
             {
@@ -151,11 +162,12 @@ namespace IT008_Game.Game.Scenes
                 if (pauseMenu.Visible == false)
                 {
                     ResumeGame();
-                }else
+                }
+                else
                 {
                     PauseGame();
                 }
-                
+
             }
 
         }
