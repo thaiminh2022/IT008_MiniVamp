@@ -1,7 +1,9 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
+using IT008_Game.Game.GameObjects.EnemyTypes;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
+using IT008_Game.Game.Scenes;
 using System.Numerics;
 
 

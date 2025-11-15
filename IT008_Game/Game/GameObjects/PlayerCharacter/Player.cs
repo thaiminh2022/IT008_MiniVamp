@@ -41,6 +41,12 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             HandleShooting();
             HandleClamping();
 
+            if (HealthSystem.GetValue() <= 0)
+            {
+                SpawnExplosion();
+                Destroy();
+            }
+
             base.Update();
         }
 
@@ -71,10 +77,8 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 switch (LevelSystem.Level)
                 {
                     case 1:
-                        // Get mouse position relative to game window
-                        //System.Drawing.Point mouseScreen = System.Windows.Forms.Control.MousePosition;
-                        System.Drawing.Point mouseClient = GameForm.MousePosition;
-                        Vector2 mousePos = new Vector2(mouseClient.X, mouseClient.Y);
+
+                        var mousePos = GameInput.MousePosition;
 
                         // Player position
                         Vector2 playerPos = Sprite.Transform.Position;
@@ -126,6 +130,8 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                         break;
                 }
 
+    
+
                 AudioManager.ShootSound.Play();
             }
         }
@@ -161,12 +167,9 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             if (rawInput.LengthSquared() > 0)
             {
                 _lastMoveDir = Vector2.Normalize(rawInput);
-
-            if (HP <= 0)
-            {
-                SpawnExplosion();
-                Destroy();
             }
+
+     
 
 
             // Moving
