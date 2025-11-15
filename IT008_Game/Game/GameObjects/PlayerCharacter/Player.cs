@@ -11,12 +11,19 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         public readonly Sprite2D Sprite;
 
 
-        private float timeBtwAttack = 0;
-        private float startTimeBtwAttack = .25f;
+        private float _timeBtwAttack = 0;
+        private float _startTimeBtwAttack => 1 / AttackSpeed;
+        public float AttackSpeed { get; set; } = 1f;
+        public float Speed { get;  set; } = 200f;
 
-        private float _speed = 200f;
+        public float Damage { get; set; } = 10f;
+        public float MaxHealth { 
+            get => HealthSystem.GetMaxValue();
+            set => HealthSystem.SetMaxValue(value, true); 
+        }
+
         public float _dashDistance = 100f; // How far the player should dash
-        private float _dashCooldown = 0.5f; // Time before dash can be used again
+        public float DashCoolDown = 0.5f; // Time before dash can be used again
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
 
@@ -26,7 +33,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         public Player()
         {
             HealthSystem = new HealthSystem(100);
-            LevelSystem = new PlayerLevelSystem(100);
+            LevelSystem = new PlayerLevelSystem(100, this);
             Sprite = new(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );
@@ -40,15 +47,15 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         public override void Update()
         {
-            if (timeBtwAttack <= 0)
+            if (_timeBtwAttack <= 0)
             {
                 HandleShooting();
             }
             else
             {
-                timeBtwAttack -= GameTime.DeltaTime;
+                _timeBtwAttack -= GameTime.DeltaTime;
             }
-            Console.WriteLine(timeBtwAttack);
+            Console.WriteLine(_timeBtwAttack);
 
             HandleMoving();
             HandleDashing();
@@ -143,7 +150,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 }
 
 
-                timeBtwAttack = startTimeBtwAttack;
+                _timeBtwAttack = _startTimeBtwAttack;
                 AudioManager.ShootSound.Play();
             }
         }
@@ -166,7 +173,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
                 Sprite.Transform.Translate(dashDir * _dashDistance);
                 _lastMoveDir = dashDir; // keep facing consistent
-                _dashTimer = _dashCooldown;
+                _dashTimer = DashCoolDown;
             }
         }
 
@@ -185,7 +192,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
 
             // Moving
-            var moveVec = rawInput * _speed * GameTime.DeltaTime;
+            var moveVec = rawInput * Speed * GameTime.DeltaTime;
             Sprite.Transform.Translate(moveVec);
         }
 
