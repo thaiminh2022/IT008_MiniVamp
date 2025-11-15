@@ -1,11 +1,6 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IT008_Game.Game.GameObjects.EnemyTypes
 {

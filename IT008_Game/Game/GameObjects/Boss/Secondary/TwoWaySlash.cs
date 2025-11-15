@@ -60,7 +60,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 _player.HealthSystem.SubstractValue(10f);
                 Destroy();
             }
-            if (RightSlash.CollidesWith(_player.Sprite) && !WillDestroyNextFrame) {
+            if (RightSlash.CollidesWith(_player.Sprite) && !WillDestroyNextFrame)
+            {
 
                 // Deal damage;
                 _player.HealthSystem.SubstractValue(10f);
@@ -70,7 +71,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             if (timeBtwDestroy > 0)
             {
                 timeBtwDestroy -= GameTime.DeltaTime;
-            }else
+            }
+            else
             {
                 Destroy();
             }

@@ -19,7 +19,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         {
             _player = player;
             Sprite = new AnimatedSprite2D();
-            Sprite.AddAnimation("boss2/whirl.png", "whirl", new AnimationConfig { 
+            Sprite.AddAnimation("boss2/whirl.png", "whirl", new AnimationConfig
+            {
                 TotalColumn = 4,
                 TotalRow = 1,
                 FPS = 16,
@@ -44,7 +45,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (waitTime <= 0)
             {
-                if (Sprite.CollidesWith(_player.Sprite)) {
+                if (Sprite.CollidesWith(_player.Sprite))
+                {
                     _player.HealthSystem.SubstractValue(10f);
                 }
 
@@ -54,7 +56,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                     Destroy();
                     dealDamage = true;
                 }
-            }else
+            }
+            else
             {
                 waitTime -= GameTime.DeltaTime;
             }

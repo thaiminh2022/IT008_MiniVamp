@@ -37,7 +37,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             }
             if (_currentRadius <= _targetRadius)
             {
-                
+
                 var dist = Vector2.Distance(origin, _player.Sprite.Transform.Position);
                 if (dist >= _targetRadius)
                 {

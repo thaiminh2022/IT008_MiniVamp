@@ -1,7 +1,6 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
-using IT008_Game.Game.GameObjects.PlayerCharacter;
 
 namespace IT008_Game.Game.GameObjects.Boss
 {
@@ -82,7 +81,7 @@ namespace IT008_Game.Game.GameObjects.Boss
 
             var backRect = new RectangleF(barPosition, new SizeF(barWidth, 25));
 
-            var normalize = _bossSystem.GetMaxValue() == 0 ? 
+            var normalize = _bossSystem.GetMaxValue() == 0 ?
                                 0 : _lastValue / _bossSystem.GetMaxValue();
 
             var healthBarWidth = barWidth * normalize;

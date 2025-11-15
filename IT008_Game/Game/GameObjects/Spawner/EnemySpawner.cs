@@ -100,7 +100,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
             if (_currentState != SpawnerState.Ready)
                 return;
 
-            if (_currentWaveIdx + 1 < _waves.Count) {
+            if (_currentWaveIdx + 1 < _waves.Count)
+            {
                 _currentWaveIdx++;
 
                 _currentWaveWorth = _waves[_currentWaveIdx].WaveWorth;
@@ -117,7 +118,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
         void HandleSpawning()
         {
-            if (_currentState != SpawnerState.Spawning) {
+            if (_currentState != SpawnerState.Spawning)
+            {
                 return;
             }
 
@@ -131,7 +133,7 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
                 var wave = _waves[_currentWaveIdx];
                 var enemyIdx = _rng.Next(wave.PossibleEnemies.Count);
-                var data  = wave.PossibleEnemies[enemyIdx];
+                var data = wave.PossibleEnemies[enemyIdx];
 
                 var enemy = data() as Enemy;
                 _currentWaveWorth -= enemy.EnemyWeight;
@@ -143,7 +145,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
                 }
                 _timeBtwSpawn = wave.WaveTimeBtwSpawn;
-            }else
+            }
+            else
             {
                 _timeBtwSpawn -= GameTime.DeltaTime;
             }
@@ -174,31 +177,32 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
             int side = _rng.Next(4);
 
-            switch (side) {
+            switch (side)
+            {
                 case 0: // Left
-                {
-                    var x = 0f - margin;
-                    var y = (float)(_rng.NextDouble() * height);
-                    return new Vector2(x, y);
-                }
+                    {
+                        var x = 0f - margin;
+                        var y = (float)(_rng.NextDouble() * height);
+                        return new Vector2(x, y);
+                    }
                 case 1: // Right
-                {
-                    var x = width + margin;
-                    var y = (float)(_rng.NextDouble() * height);
-                    return new Vector2(x, y);
-                }
+                    {
+                        var x = width + margin;
+                        var y = (float)(_rng.NextDouble() * height);
+                        return new Vector2(x, y);
+                    }
                 case 2: // Top
-                {
-                    var x = (float)(_rng.NextDouble() * width);
-                    var y = 0 - margin;
-                    return new Vector2(x, y);
-                }
+                    {
+                        var x = (float)(_rng.NextDouble() * width);
+                        var y = 0 - margin;
+                        return new Vector2(x, y);
+                    }
                 case 3: // Bottom
-                {
-                    var x = (float)(_rng.NextDouble() * width);
-                    var y = height + margin;
-                    return new Vector2(x, y);
-                }
+                    {
+                        var x = (float)(_rng.NextDouble() * width);
+                        var y = height + margin;
+                        return new Vector2(x, y);
+                    }
                 default:
                     throw new NotImplementedException();
             }

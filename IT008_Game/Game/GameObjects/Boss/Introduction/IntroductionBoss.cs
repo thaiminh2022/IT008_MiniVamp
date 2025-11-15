@@ -138,7 +138,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
                 Children.Add(bossSlash);
                 _attackCalled = false;
 
-                if (_willDoubleAttack) {
+                if (_willDoubleAttack)
+                {
                     timeBtwAttack = 0.25f;
                 }
                 else

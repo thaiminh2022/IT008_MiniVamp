@@ -1,5 +1,4 @@
 ﻿using IT008_Game.Core.System;
-using System.Security.Policy;
 
 namespace IT008_Game.Core.Components
 {

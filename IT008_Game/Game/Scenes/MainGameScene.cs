@@ -2,11 +2,8 @@
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
-using IT008_Game.Game.GameObjects.Boss.Introduction;
-using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.GameObjects.Spawner;
-using System;
 
 
 namespace IT008_Game.Game.Scenes
@@ -129,7 +126,7 @@ namespace IT008_Game.Game.Scenes
             BulletList.Update();
             EnemyBulletList.Update();
 
-            
+
             // ENEMY ON BULLET COLLISION
             for (int i = 0; i < EnemyList.Count; i++)
             {

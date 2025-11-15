@@ -2,8 +2,6 @@
 using IT008_Game.Core.Components;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Secondary
@@ -24,7 +22,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
         public TornadoProjectile(Vector2 spawnPosition, Player player)
         {
-            _player     = player;
+            _player = player;
             Sprite = new AnimatedSprite2D();
             Sprite.AddAnimation("boss2/tornado.png", "tornado", new AnimationConfig
             {
@@ -65,13 +63,15 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                     var dir = _moveToPosition - Sprite.Transform.Position;
                     dir = Vector2.Normalize(dir);
                     Sprite.Transform.Position += dir * 100f * GameTime.DeltaTime;
-                }else
+                }
+                else
                 {
                     _moveToPosition = Sprite.Transform.Position;
                     _timeBtwNewPosition = _startTimeBtwNewPosition;
                 }
-                    
-            }else
+
+            }
+            else
             {
                 _timeBtwNewPosition -= GameTime.DeltaTime;
             }

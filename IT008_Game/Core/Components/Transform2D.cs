@@ -15,11 +15,15 @@ namespace IT008_Game.Core.Components
         private Vector2 _position = Vector2.Zero;
         private Vector2 _scale = Vector2.One;
         public Vector2 Position { get => _position; set => _position = value; }
-        public Vector2 Scale { get => _scale; set {
+        public Vector2 Scale
+        {
+            get => _scale; set
+            {
                 Pivot /= _scale;
                 _scale = value;
                 Pivot *= value;
-        }}
+            }
+        }
         public Vector2 Pivot { get; set; } = Vector2.Zero;
 
         public void Translate(Vector2 dv)

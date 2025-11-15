@@ -22,13 +22,14 @@
             OnHealthChange?.Invoke(this, EventArgs.Empty);
         }
 
-        public override void ResetToFull() {
+        public override void ResetToFull()
+        {
             base.ResetToFull();
             OnHealthChange?.Invoke(this, EventArgs.Empty);
         }
         public override void SubstractValue(float amount)
         {
-            if (_isDead) 
+            if (_isDead)
                 return;
 
             base.SubstractValue(amount);

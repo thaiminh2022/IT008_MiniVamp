@@ -33,7 +33,8 @@ namespace IT008_Game.Core.Components
         public virtual void AddValue(TType amount)
         {
             _value += amount;
-            if (_value > _maxValue) {
+            if (_value > _maxValue)
+            {
                 _value = _maxValue;
             }
         }
@@ -51,7 +52,8 @@ namespace IT008_Game.Core.Components
             }
         }
 
-        public virtual void SubstractValue(TType amount) {
+        public virtual void SubstractValue(TType amount)
+        {
             _value -= amount;
             if (_value < TType.Zero)
             {

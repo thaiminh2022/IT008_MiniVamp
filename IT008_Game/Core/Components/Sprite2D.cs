@@ -14,7 +14,9 @@ namespace IT008_Game.Core.Components
         public RectangleF Region
         {
             get { return _region; }
-            set { _region = value;
+            set
+            {
+                _region = value;
                 var size = (_region.Size / 2f).ToVector2();
                 Transform.Pivot = size * Transform.Scale;
             }

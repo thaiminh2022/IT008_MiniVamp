@@ -12,7 +12,7 @@ namespace IT008_Game.Game.GameObjects
         Vector2 _moveVec;
 
         GameTimer timer1;
-        public Bullet(Vector2 dir,float speed = 1500f)
+        public Bullet(Vector2 dir, float speed = 1500f)
         {
             _bulletSpeed = speed;
 

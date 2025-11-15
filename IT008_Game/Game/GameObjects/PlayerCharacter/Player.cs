@@ -16,7 +16,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
 
-        public HealthSystem HealthSystem { get; private set; }  
+        public HealthSystem HealthSystem { get; private set; }
         public PlayerLevelSystem LevelSystem { get; private set; }
 
         public Player()
@@ -130,7 +130,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                         break;
                 }
 
-    
+
 
                 AudioManager.ShootSound.Play();
             }
@@ -169,7 +169,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 _lastMoveDir = Vector2.Normalize(rawInput);
             }
 
-     
+
 
 
             // Moving

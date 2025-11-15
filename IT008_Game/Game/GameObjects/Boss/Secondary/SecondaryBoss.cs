@@ -66,7 +66,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             {
                 TotalColumn = 11,
                 TotalRow = 1,
-                FPS = 12, 
+                FPS = 12,
                 Loop = false,
             });
 
@@ -114,7 +114,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             base.Update();
         }
 
-        private void TwoWaySlash() {
+        private void TwoWaySlash()
+        {
             _didSlamed = true;
 
             if (_didSlamed && Sprite.AnimationFinished())
@@ -128,12 +129,12 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         private void LimitPlayer()
         {
             if (_didFireCircle) return;
-            
+
             _didFireCircle = true;
             var fire = new FireCircle(_player);
-            Children.Add(fire);   
+            Children.Add(fire);
         }
-            
+
         private void BiteState()
         {
             if (!_moveToPlayer && Vector2.Distance(_player.Sprite.Transform.Position, Sprite.Transform.Position) > 16f)
@@ -162,7 +163,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                         Children.Add(proj);
                     }
                 }
-                
+
 
                 var dist = Vector2.Distance(Sprite.Transform.Position, _player.Sprite.Transform.Position);
                 var radius = 128f;
@@ -173,7 +174,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
                 }
             }
-           
+
 
             if (Sprite.AnimationFinished())
             {
@@ -205,7 +206,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 if (_didFireCircle && HealthSystem.GetValueNormalized() < .25f)
                 {
                     _currentState = State.LimitPlayer;
-                }else
+                }
+                else
                 {
                     _currentState = ChooseState();
                 }
@@ -275,10 +277,11 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 if (_sameStateCount < 2)
                 {
                     _sameStateCount++;
-                }else
+                }
+                else
                 {
                     // Choose a new state until diff
-                    while(state == _currentState)
+                    while (state == _currentState)
                     {
                         index = _rng.Next(normalStates.Length);
                         state = normalStates[index];

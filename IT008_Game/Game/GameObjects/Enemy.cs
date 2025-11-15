@@ -26,7 +26,7 @@ namespace IT008_Game.Game.GameObjects
 
         //enemy attack cooldown
         private float ChargeTimer = 0f;
-        public float ChargeTime = 3f; 
+        public float ChargeTime = 3f;
 
         //number off time enemy use attack when attacking
         public int AtkNum = 5;
@@ -39,9 +39,9 @@ namespace IT008_Game.Game.GameObjects
         //player target
         private Sprite2D _target;
 
-        public Enemy(Player? ChaseTarget,float DifficultyLvl = 1f)
+        public Enemy(Player? ChaseTarget, float DifficultyLvl = 1f)
         {
-             _target = ChaseTarget.Sprite;
+            _target = ChaseTarget.Sprite;
             CurrentHealth = MaxHealth;
             EnemyDiffLvl = DifficultyLvl;
 
@@ -59,13 +59,12 @@ namespace IT008_Game.Game.GameObjects
             Sprite.Transform.Scale = new Vector2(0.5f, 0.5f);
         }
 
-        
+
 
         public void Damaged()
         {
             AudioManager.HitSound.Play();
             CurrentHealth--;
-
         }
 
         public override void Draw(Graphics g)
@@ -76,13 +75,14 @@ namespace IT008_Game.Game.GameObjects
 
         private void ClockWork()
         {
-            if (ChargeTimer <= ChargeTime) {
+            if (ChargeTimer <= ChargeTime)
+            {
                 ChargeTimer += GameTime.DeltaTime;
                 if (ChargeTimer > ChargeTime) OnChargeTrigger();
                 return;
             }
-            
-            if(AtkTimer <= AtkTime && AtkCount >= 1)
+
+            if (AtkTimer <= AtkTime && AtkCount >= 1)
                 AtkTimer += GameTime.DeltaTime;
             else
             {
@@ -95,15 +95,15 @@ namespace IT008_Game.Game.GameObjects
                 OnAttackTrigger();
                 AtkTimer = 0f;
                 AtkCount++;
-                
+
             }
-            
+
         }
         public override void Update()
         {
             ClockWork();
             if (ChargeTimer <= ChargeTime) LinearChase();
-           
+
             if (CurrentHealth < 0)
             {
                 Destroy();
@@ -133,14 +133,14 @@ namespace IT008_Game.Game.GameObjects
 
         public void Shoot()
         {
-            
-            Vector2 ShootDirection = GameMathHelper.Rotate(AimingDirection,0);
-            var bullet = new Bullet(ShootDirection,200);
+
+            Vector2 ShootDirection = GameMathHelper.Rotate(AimingDirection, 0);
+            var bullet = new Bullet(ShootDirection, 200);
             bullet.Setup(Sprite.Transform.Position + 50 * ShootDirection);
             if (SceneManager.CurrentScene is MainGameScene mg)
             {
                 mg.EnemyBulletList.Add(bullet);
-                    
+
             }
             AudioManager.ShootSound.Play();
 

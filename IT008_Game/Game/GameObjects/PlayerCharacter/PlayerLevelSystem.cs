@@ -12,7 +12,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         {
             _level = 1;
         }
-       
+
         public override void AddValue(int amount)
         {
             base.AddValue(amount);

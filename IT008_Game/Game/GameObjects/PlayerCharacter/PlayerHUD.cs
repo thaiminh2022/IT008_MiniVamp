@@ -1,6 +1,5 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.System;
-using System.Drawing.Text;
 namespace IT008_Game.Game.GameObjects.PlayerCharacter
 {
     internal class PlayerHUD : GameObject

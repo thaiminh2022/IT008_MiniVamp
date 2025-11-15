@@ -28,7 +28,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         {
             Sprite.Transform.Translate(-_speed * GameTime.DeltaTime, 0);
 
-            if (Sprite.CollidesWith(_player.Sprite) && WillDestroyNextFrame == false) {
+            if (Sprite.CollidesWith(_player.Sprite) && WillDestroyNextFrame == false)
+            {
                 _player.HealthSystem.SubstractValue(_damage);
                 Destroy();
             }
