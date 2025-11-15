@@ -4,6 +4,7 @@ using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects.EnemyTypes;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.Scenes;
+using System;
 using System.Numerics;
 
 
@@ -138,7 +139,6 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 var enemy = data() as Enemy;
                 _currentWaveWorth -= enemy.EnemyWeight;
 
-                Children.Add(enemy);
                 if (SceneManager.CurrentScene is MainGameScene mg)
                 {
                     mg.EnemyList.Add(enemy);
@@ -156,10 +156,13 @@ namespace IT008_Game.Game.GameObjects.Spawner
             if (_currentState != SpawnerState.Waiting)
                 return;
 
-            if (Children.Count == 0)
+            if (SceneManager.CurrentScene is MainGameScene mg)
             {
-                _currentState = SpawnerState.Ready;
-                NextWave();
+                if (mg.EnemyList.Count == 0)
+                {
+                    _currentState = SpawnerState.Ready;
+                    NextWave();
+                }
             }
         }
         public override void Update()
