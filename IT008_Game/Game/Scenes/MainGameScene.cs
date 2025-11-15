@@ -3,6 +3,7 @@ using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
 using IT008_Game.Game.GameObjects.Boss.Secondary;
+using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.GameObjects.Spawner;
 
 
@@ -36,7 +37,6 @@ namespace IT008_Game.Game.Scenes
             // spawner.NextWave();
 
             DrawPauseMenu();
-            DrawPlayerUI();
         }
 
         public override void UnLoad()
@@ -100,27 +100,9 @@ namespace IT008_Game.Game.Scenes
             flowLayout.Controls.AddRange([continueBtn, mainMenuButton]);
 
             pauseMenu.Controls.Add(flowLayout, 0, 1);
-            Controls.AddRange([
-                new Label() {
-                    Text = "Esc to pause/unpause\nWASD/Arrow keys to move\nX to destroy the player\nSpace to shoot some dino (check terminal)",
-                    BackColor = Color.Transparent,
-                    AutoSize = true
-                },
-                pauseMenu
-            ]);
+            Controls.Add(pauseMenu);
         }
 
-        private void DrawPlayerUI()
-        {
-            var panel = new Panel()
-            {
-                BackColor = Color.Gray,
-                Width = 200,
-                Height = 50,
-            };
-
-            Controls.Add(panel);
-        }
 
         public override void Update()
         {

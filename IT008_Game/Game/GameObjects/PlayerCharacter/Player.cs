@@ -4,7 +4,7 @@ using IT008_Game.Core.System;
 using IT008_Game.Game.Scenes;
 using System.Numerics;
 
-namespace IT008_Game.Game.GameObjects
+namespace IT008_Game.Game.GameObjects.PlayerCharacter
 {
     internal sealed class Player : GameObject
     {
@@ -28,6 +28,9 @@ namespace IT008_Game.Game.GameObjects
             );
             Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth / 2, GameManager.VirtualHeight / 2);
             Sprite.Transform.Scale = new Vector2(0.5f, 0.5f);
+
+            var hud = new PlayerHUD(this);
+            Children.Add(hud);
         }
 
 
@@ -112,8 +115,8 @@ namespace IT008_Game.Game.GameObjects
             var pos = Sprite.Transform.Position;
 
             // Half‑size of sprite (so we clamp by edges, not center)
-            float halfW = (Sprite.Region.Width * MathF.Abs(Sprite.Transform.Scale.X)) / 2f;
-            float halfH = (Sprite.Region.Height * MathF.Abs(Sprite.Transform.Scale.Y)) / 2f;
+            float halfW = Sprite.Region.Width * MathF.Abs(Sprite.Transform.Scale.X) / 2f;
+            float halfH = Sprite.Region.Height * MathF.Abs(Sprite.Transform.Scale.Y) / 2f;
 
             // Clamp X between left and right edges
             pos.X = Math.Clamp(pos.X, halfW, GameManager.VirtualWidth - halfW);
@@ -139,6 +142,8 @@ namespace IT008_Game.Game.GameObjects
 
         public override void Draw(Graphics g)
         {
+
+
             g.DrawSprite(Sprite);
             base.Draw(g);
         }

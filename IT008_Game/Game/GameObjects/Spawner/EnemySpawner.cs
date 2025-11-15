@@ -1,6 +1,7 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
+using IT008_Game.Game.GameObjects.PlayerCharacter;
 using System.Numerics;
 
 

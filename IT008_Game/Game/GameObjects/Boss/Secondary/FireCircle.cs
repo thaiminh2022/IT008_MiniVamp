@@ -38,7 +38,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             {
                 var scalePerScond = (_startUniformScale - _targetUnifromScale) / totalTimeBeforeEnd;
                 Sprite.Transform.Scale -= Vector2.One * scalePerScond * GameTime.DeltaTime;
-                Console.WriteLine($"Smaller {Sprite.Transform.Scale}");
+                // Console.WriteLine($"Smaller {Sprite.Transform.Scale}");
             }
             Sprite.Update();
             base.Update();

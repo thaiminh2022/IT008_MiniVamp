@@ -20,6 +20,15 @@ namespace IT008_Game.Core.Components
         {
             return _value;
         }
+        public TType GetMaxValue()
+        {
+            return _maxValue;
+        }
+        public TType GetValueNormalized()
+        {
+            if (_maxValue == TType.Zero) return TType.Zero;
+            return _value / _maxValue;
+        }
 
         public virtual void AddValue(TType amount)
         {

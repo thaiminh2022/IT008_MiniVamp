@@ -80,7 +80,7 @@ namespace IT008_Game.Core.System
         }
         public void Draw(Graphics g)
         {
-            foreach (var item in _internal)
+            foreach (var item in _internal.OrderBy(x => x.DrawLayer))
             {
                 item.Draw(g);
             }

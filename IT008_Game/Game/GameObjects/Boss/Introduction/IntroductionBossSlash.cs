@@ -1,5 +1,6 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.System;
+using IT008_Game.Game.GameObjects.PlayerCharacter;
 using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Introduction
