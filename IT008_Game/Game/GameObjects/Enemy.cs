@@ -40,7 +40,10 @@ namespace IT008_Game.Game.GameObjects
 
         public Enemy(Player? ChaseTarget,float DifficultyLvl = 1f)
         {
-             _target = ChaseTarget.Sprite;
+            MaxHealth = (int)Math.Round(MaxHealth * DifficultyLvl);
+            Damage = (int)Math.Round(Damage * DifficultyLvl);
+
+            _target = ChaseTarget.Sprite;
             CurrentHealth = MaxHealth;
             EnemyDiffLvl = DifficultyLvl;
 

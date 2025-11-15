@@ -25,7 +25,7 @@ namespace IT008_Game.Game.Scenes
         {
             // We create the player, and enemies
             player = new();
-            enemySpawner = new EnemySpawner(player);
+            enemySpawner = new EnemySpawnerEndless(player);
 
 
             Children.AddRange([

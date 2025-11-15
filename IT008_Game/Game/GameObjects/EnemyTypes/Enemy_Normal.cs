@@ -10,7 +10,7 @@ namespace IT008_Game.Game.GameObjects.EnemyTypes
 {
     internal class Enemy_Normal : Enemy
     {
-        public Enemy_Normal(Player ChaseTarget) : base(ChaseTarget)
+        public Enemy_Normal(Player ChaseTarget, float DifficultyLvl = 1f) : base(ChaseTarget,DifficultyLvl)
         {
             int size = 100;
             Bitmap redSquare = new Bitmap(size, size);
