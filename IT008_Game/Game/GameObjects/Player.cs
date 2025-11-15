@@ -15,9 +15,12 @@ namespace IT008_Game.Game.GameObjects
         private float _dashCooldown = 0.5f; // Time before dash can be used again
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
-
+        
         public float HP { get; set; } = 500f;
         public float MaxHP { get; private set; } = 500f;
+        
+        public bool _isInvulnerable = false;
+        private float _invulnerableTimer = 0f;
 
         public int Level { get; private set; } = 1;
 
@@ -55,7 +58,7 @@ namespace IT008_Game.Game.GameObjects
             // Cooldown on dash
             if (_dashTimer > 0)
                 _dashTimer -= GameTime.DeltaTime;
-
+            
             // Dash
             if (GameInput.GetKeyDown(Keys.F) && _dashTimer <= 0)
             {
@@ -69,6 +72,19 @@ namespace IT008_Game.Game.GameObjects
                 Sprite.Transform.Translate(dashDir * _dashDistance);
                 _lastMoveDir = dashDir; // keep facing consistent
                 _dashTimer = _dashCooldown;
+
+                //immortal for a sec
+                _isInvulnerable = true;
+                _invulnerableTimer = 0.15f;
+            }
+
+            if (_isInvulnerable)
+            {
+                _invulnerableTimer -= GameTime.DeltaTime;
+                if (_invulnerableTimer <= 0f)
+                {
+                    _isInvulnerable = false;
+                }
             }
 
             // Shooting
@@ -77,9 +93,22 @@ namespace IT008_Game.Game.GameObjects
                 switch (Level)
                 {
                     case 1:
-                        // Normal single shot in last move direction
-                        SpawnBullet(_lastMoveDir);
-                        break;
+                        // Get mouse position relative to game window
+                        //System.Drawing.Point mouseScreen = System.Windows.Forms.Control.MousePosition;
+                        System.Drawing.Point mouseClient = GameForm.MousePosition;
+                        Vector2 mousePos = new Vector2(mouseClient.X, mouseClient.Y);
+
+                        // Player position
+                        Vector2 playerPos = Sprite.Transform.Position;
+
+                        // Direction vector
+                        Vector2 toMouse = mousePos - playerPos;
+                        if (toMouse.LengthSquared() > 0)
+                        {
+                            Vector2 dir = Vector2.Normalize(toMouse);
+                            SpawnBullet(dir);
+                        }
+                        break; ;
 
                     case 2:
                         // Shoot in 4 directions (up, down, left, right)
@@ -103,6 +132,20 @@ namespace IT008_Game.Game.GameObjects
                         // Shoot one homing bullet
                         SpawnBullet(_lastMoveDir, homing: true);
                         break;
+                    case 5:
+                        SpawnBullet(Vector2.Normalize(new Vector2(1, 1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(-1, 1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(1, -1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(-1, -1)), homing: true);
+                        break;
+                    case 6:
+                        for (int i = 0; i < 8; i++)
+                        {
+                            float angle = MathF.PI / 4 * i; // 45° increments
+                            var dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+                            SpawnBullet(dir, homing: true);
+                        }
+                        break;
                 }
 
                 AudioManager.ShootSound.Play();
@@ -123,6 +166,12 @@ namespace IT008_Game.Game.GameObjects
 
             Sprite.Transform.Position = pos;
 
+            if (HP <= 0)
+            {
+                SpawnExplosion();
+                Destroy();
+            }
+
 
             base.Update();
         }
@@ -134,6 +183,15 @@ namespace IT008_Game.Game.GameObjects
 
             if (SceneManager.CurrentScene is MainGameScene mg)
                 mg.BulletList.Add(bullet);
+        }
+
+        private void SpawnExplosion()
+        {
+            var explosion = new Explosion(Sprite.Transform.Position);
+            if (SceneManager.CurrentScene is MainGameScene mg)
+            {
+                mg.Children.Add(explosion); // or mg.BulletList.Add(explosion) if you want it managed there
+            }
         }
 
 
