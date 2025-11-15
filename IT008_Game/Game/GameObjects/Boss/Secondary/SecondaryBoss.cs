@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Secondary
 {
-    internal class SecondaryBoss : GameObject
+    internal class SecondaryBoss : GameObject, IEnemy
     {
         public readonly AnimatedSprite2D Sprite;
         private readonly Player _player;
@@ -47,7 +47,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         public SecondaryBoss(Player player)
         {
             Sprite = new AnimatedSprite2D();
-            HealthSystem = new HealthSystem(1000);
+            HealthSystem = new HealthSystem(1500);
             Sprite.AddAnimation("boss2/idle.png", "idle", new AnimationConfig
             {
                 TotalColumn = 6,
@@ -79,13 +79,18 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth / 2f, GameManager.VirtualHeight / 2f);
             _player = player;
 
-            var hud = new BossHUD(HealthSystem, "P Diddy Slime");
+            var hud = new BossHUD(HealthSystem, "P Daddy's Slime");
             Children.Add(hud);
         }
 
         public override void Update()
         {
             HandleLooking();
+
+            if (HealthSystem.IsDead)
+            {
+                Destroy();
+            }
 
             switch (_currentState)
             {
@@ -133,6 +138,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             _didFireCircle = true;
             var fire = new FireCircle(_player);
             Children.Add(fire);
+
+            _currentState = State.Idle;
         }
 
         private void BiteState()
@@ -166,7 +173,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
 
                 var dist = Vector2.Distance(Sprite.Transform.Position, _player.Sprite.Transform.Position);
-                var radius = 128f;
+                var radius = 164f;
                 if (dist <= radius)
                 {
                     // damage player
@@ -203,7 +210,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         {
             if (_timeBtwIdle <= 0)
             {
-                if (_didFireCircle && HealthSystem.GetValueNormalized() < .25f)
+                if (!_didFireCircle && HealthSystem.GetValueNormalized() < .4f)
                 {
                     _currentState = State.LimitPlayer;
                 }
@@ -242,7 +249,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         {
             if (GameManager.DebugMode)
             {
-                g.DrawCircle(Sprite.Transform.Position.ToPointF(), 128, new Pen(Color.AliceBlue, 3));
+                g.DrawCircle(Sprite.Transform.Position.ToPointF(), 164, new Pen(Color.AliceBlue, 3));
             }
 
             base.Draw(g);
@@ -293,5 +300,19 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             return normalStates[index];
         }
 
+        public int GetWeight()
+        {
+            return 100;
+        }
+
+        public Sprite2D GetSprite()
+        {
+            return Sprite;
+        }
+
+        public void Damage(int damage)
+        {
+            HealthSystem.SubstractValue(damage);
+        }
     }
 }

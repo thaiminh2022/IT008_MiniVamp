@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Introduction
 {
-    internal class IntroductionBoss : GameObject
+    internal class IntroductionBoss : GameObject, IEnemy
     {
         enum Attacks
         {
@@ -21,8 +21,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         Player _player;
 
         // Mechanics
-        float startTimeBtwAttack = 3;
-        float timeBtwAttack = 3;
+        float startTimeBtwAttack = 1.8f;
+        float timeBtwAttack = 1.8f;
 
         bool _attackCalled = false;
         bool _willDoubleAttack = false;
@@ -88,6 +88,11 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         public override void Update()
         {
             HandleAttack();
+
+            if (HealthSystem.GetValue() == 0)
+            {
+                Destroy();
+            }
 
             // Keep this so its children will update
             base.Update();
@@ -166,6 +171,21 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
 
             // Keep this so its children will draw
             base.Draw(g);
+        }
+
+        public int GetWeight()
+        {
+            return 100;
+        }
+
+        public Sprite2D GetSprite()
+        {
+            return Sprite;
+        }
+
+        public void Damage(int damage)
+        {
+            HealthSystem.SubstractValue(damage);
         }
     }
 }

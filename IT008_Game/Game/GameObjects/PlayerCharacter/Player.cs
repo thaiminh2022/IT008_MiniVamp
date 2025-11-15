@@ -10,6 +10,10 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
     {
         public readonly Sprite2D Sprite;
 
+
+        private float timeBtwAttack = 0;
+        private float startTimeBtwAttack = .25f;
+
         private float _speed = 200f;
         public float _dashDistance = 100f; // How far the player should dash
         private float _dashCooldown = 0.5f; // Time before dash can be used again
@@ -36,9 +40,18 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         public override void Update()
         {
+            if (timeBtwAttack <= 0)
+            {
+                HandleShooting();
+            }
+            else
+            {
+                timeBtwAttack -= GameTime.DeltaTime;
+            }
+            Console.WriteLine(timeBtwAttack);
+
             HandleMoving();
             HandleDashing();
-            HandleShooting();
             HandleClamping();
 
             if (HealthSystem.GetValue() <= 0)
@@ -71,13 +84,13 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         private void HandleShooting()
         {
+
             // Shooting
             if (GameInput.GetKeyDown(Keys.Space) || GameInput.GetMouseButtonDown(MouseButtons.Left))
             {
                 switch (LevelSystem.Level)
                 {
                     case 1:
-
                         var mousePos = GameInput.MousePosition;
 
                         // Player position
@@ -90,8 +103,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                             Vector2 dir = Vector2.Normalize(toMouse);
                             SpawnBullet(dir);
                         }
-                        break; ;
-
+                        break;
                     case 2:
                         // Shoot in 4 directions (up, down, left, right)
                         SpawnBullet(new Vector2(1, 0));
@@ -131,7 +143,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 }
 
 
-
+                timeBtwAttack = startTimeBtwAttack;
                 AudioManager.ShootSound.Play();
             }
         }
