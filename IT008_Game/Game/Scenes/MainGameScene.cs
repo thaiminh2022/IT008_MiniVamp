@@ -2,8 +2,9 @@
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
-using IT008_Game.Game.GameObjects.Boss;
+using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.Spawner;
+using System;
 
 
 namespace IT008_Game.Game.Scenes
@@ -13,26 +14,30 @@ namespace IT008_Game.Game.Scenes
         public static new string Name => "Game";
         TableLayoutPanel? pauseMenu;
         Player? player;
+        public EnemySpawner? enemySpawner;
 
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
+
+        public GameObjectList EnemyBulletList { get; private set; } = [];
 
         public override void Load()
         {
             // We create the player, and enemies
             player = new();
-            var spawner = new EnemySpawner(player);
+            enemySpawner = new EnemySpawner(player);
+
 
             Children.AddRange([
                 player,
-                spawner,
+                enemySpawner,
             ]);
 
-            EnemyList.AddRange([
-                 new Enemy()
-            ]);
+            //EnemyList.AddRange([
+            //     new Enemy(player)
+            //]);
 
-            spawner.NextWave();
+            enemySpawner.NextWave();
 
             DrawPauseMenu();
         }
@@ -45,6 +50,10 @@ namespace IT008_Game.Game.Scenes
                 item.Destroy();
             }
             foreach (var item in BulletList)
+            {
+                item.Destroy();
+            }
+            foreach (var item in EnemyBulletList)
             {
                 item.Destroy();
             }
@@ -116,11 +125,16 @@ namespace IT008_Game.Game.Scenes
                 player?.Destroy();
             }
 
+            //anything to do with spawning waves
+            enemySpawner.Update();
+
+
             EnemyList.Update();
             BulletList.Update();
+            EnemyBulletList.Update();
 
-
-            // EXAMPLE BULLET COLLISION
+            
+            // ENEMY ON BULLET COLLISION
             for (int i = 0; i < EnemyList.Count; i++)
             {
                 var enemy = EnemyList[i] as Enemy;
@@ -132,8 +146,19 @@ namespace IT008_Game.Game.Scenes
                     {
                         Console.WriteLine("hit");
                         bullet.Destroy();
-                        enemy.Damage();
+                        enemy.Damaged();
                     }
+                }
+            }
+            // PLAYER ON BULLET COLLISION
+            for (int j = 0; j < EnemyBulletList.Count; j++)
+            {
+                var bullet = EnemyBulletList[j] as Bullet;
+                if (player.Sprite.CollidesWith(bullet.Sprite) && !bullet.WillDestroyNextFrame)
+                {
+                    Console.WriteLine("player got hit");
+                    bullet.Destroy();
+                    //player.Damaged();
                 }
             }
 
@@ -163,6 +188,7 @@ namespace IT008_Game.Game.Scenes
         {
             EnemyList.Draw(g);
             BulletList.Draw(g);
+            EnemyBulletList.Draw(g);
 
             base.Draw(g);
         }

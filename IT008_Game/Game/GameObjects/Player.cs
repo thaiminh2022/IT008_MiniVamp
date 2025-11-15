@@ -15,14 +15,14 @@ namespace IT008_Game.Game.GameObjects
         private float _dashCooldown = 0.5f; // Time before dash can be used again
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
-
-        public float HP = 1000f;
-        public float MaxHP = 1000f;
+        
+        public float HP { get; set; } = 500f;
+        public float MaxHP { get; private set; } = 500f;
+        
         public bool _isInvulnerable = false;
         private float _invulnerableTimer = 0f;
 
-
-        public int Level = 1;
+        public int Level { get; private set; } = 1;
 
         public Player()
         {
@@ -219,5 +219,6 @@ namespace IT008_Game.Game.GameObjects
 
             base.Draw(g);
         }
+
     }
 }

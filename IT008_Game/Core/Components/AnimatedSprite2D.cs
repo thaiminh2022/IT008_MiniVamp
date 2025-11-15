@@ -57,6 +57,11 @@ namespace IT008_Game.Core.Components
             return anim;
         }
 
+        public void AddAnimation(Animation2D anim, string name)
+        {
+            Animations.Add(name, anim);
+        }
+
         public void Update()
         {
             // Doing this so animation changed on next frame
