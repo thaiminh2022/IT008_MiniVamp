@@ -22,5 +22,15 @@ namespace IT008_Game.Core
 
             return new Vector2(x, y);   // inside unit circle centered at (0,0)
         }
+        public static Vector2 Rotate(Vector2 v, float radians)
+        {
+            float cos = MathF.Cos(radians);
+            float sin = MathF.Sin(radians);
+
+            return new Vector2(
+                v.X * cos - v.Y * sin,
+                v.X * sin + v.Y * cos
+            );
+        }
     }
 }
