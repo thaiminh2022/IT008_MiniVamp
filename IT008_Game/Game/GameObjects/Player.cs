@@ -16,13 +16,13 @@ namespace IT008_Game.Game.GameObjects
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
 
-        public float HP { get; set; } = 500f;
-        public float MaxHP { get; private set; } = 500f;
+        public HealthSystem HealthSystem { get; private set; }  
 
         public int Level { get; private set; } = 1;
 
         public Player()
         {
+            HealthSystem = new HealthSystem(100);
             Sprite = new(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );
@@ -140,25 +140,6 @@ namespace IT008_Game.Game.GameObjects
         public override void Draw(Graphics g)
         {
             g.DrawSprite(Sprite);
-
-            SolidBrush green = new SolidBrush(Color.Green);
-            SolidBrush gray = new SolidBrush(Color.Gray);
-       
-            // --- UI Health Bar ---
-            float hpRatio = Math.Clamp(HP / MaxHP, 0f, 1f);
-
-            // Position at bottom center of screen
-            float barWidth = 500f;   // desired width in pixels
-            float barHeight = 20f;   // desired height in pixels
-            float x = (GameManager.VirtualWidth - barWidth) / 2f;
-            float y = GameManager.VirtualHeight - barHeight - 75f; // 10px above bottom
-
-            // Draw background (gray)
-            g.FillRectangle(gray, x, y, barWidth, barHeight);
-
-            // Draw foreground (red) scaled by HP
-            g.FillRectangle(green, x, y, barWidth * hpRatio, barHeight);
-
             base.Draw(g);
         }
     }

@@ -36,6 +36,7 @@ namespace IT008_Game.Game.Scenes
             // spawner.NextWave();
 
             DrawPauseMenu();
+            DrawPlayerUI();
         }
 
         public override void UnLoad()
@@ -107,6 +108,18 @@ namespace IT008_Game.Game.Scenes
                 },
                 pauseMenu
             ]);
+        }
+
+        private void DrawPlayerUI()
+        {
+            var panel = new Panel()
+            {
+                BackColor = Color.Gray,
+                Width = 200,
+                Height = 50,
+            };
+
+            Controls.Add(panel);
         }
 
         public override void Update()
