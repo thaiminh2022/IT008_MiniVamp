@@ -114,7 +114,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (_didSlamed && Sprite.AnimationFinished())
             {
-                var slash = new TwoWaySlash(Sprite.Transform.Position);
+                var slash = new TwoWaySlash(Sprite.Transform.Position, _player);
                 Children.Add(slash);
                 _currentState = State.Idle;
             }
