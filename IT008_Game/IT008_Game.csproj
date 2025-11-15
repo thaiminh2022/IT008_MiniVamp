@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Assets\boss\" />
+    <Folder Include="Assets\boss2\" />
   </ItemGroup>
 	
 

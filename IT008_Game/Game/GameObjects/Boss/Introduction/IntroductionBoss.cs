@@ -1,10 +1,9 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
-using System.ComponentModel.Design.Serialization;
 using System.Numerics;
 
-namespace IT008_Game.Game.GameObjects.Boss
+namespace IT008_Game.Game.GameObjects.Boss.Introduction
 {
     internal class IntroductionBoss : GameObject
     {
@@ -26,6 +25,7 @@ namespace IT008_Game.Game.GameObjects.Boss
         float timeBtwAttack = 3;
 
         bool _attackCalled = false;
+        bool _willDoubleAttack = false;
         Animation2D _atkAnim;
 
         // Stats
@@ -53,8 +53,9 @@ namespace IT008_Game.Game.GameObjects.Boss
             Sprite.AddAnimation("boss/idle.png", "idle", new AnimationConfig
             {
                 TotalColumn = 10,
-                TotalRow = 1
+                TotalRow = 1,
             });
+
             Sprite.AddAnimation("boss/run.png", "walk", new AnimationConfig
             {
                 TotalColumn = 16,
@@ -68,8 +69,8 @@ namespace IT008_Game.Game.GameObjects.Boss
                 TotalRow = 1,
                 Loop = false,
             });
-            Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth - 50, GameManager.VirtualHeight / 2f);
-            Sprite.Transform.Scale = new Vector2(-1, 1)* 3;
+            Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth - 100f, GameManager.VirtualHeight / 2f);
+            Sprite.Transform.Scale = new Vector2(-1, 1) * 3;
 
             _player = player;
             timeBtwAttack = startTimeBtwAttack;
@@ -113,6 +114,7 @@ namespace IT008_Game.Game.GameObjects.Boss
                     else
                     {
                         Sprite.Play("attack");
+                        _willDoubleAttack = new Random().NextDouble() > 0.25;
                         Sprite.Transform.Position = new Vector2(Sprite.Transform.Position.X,
                             _player.Sprite.Transform.Position.Y);
 
@@ -130,7 +132,15 @@ namespace IT008_Game.Game.GameObjects.Boss
                 var bossSlash = new IntroductionBossSlash(_player, Sprite.Transform.Position);
                 Children.Add(bossSlash);
                 _attackCalled = false;
-                timeBtwAttack = startTimeBtwAttack;
+
+                if (_willDoubleAttack) {
+                    timeBtwAttack = 0.25f;
+                }
+                else
+                {
+                    timeBtwAttack = startTimeBtwAttack;
+
+                }
             }
             else
             {

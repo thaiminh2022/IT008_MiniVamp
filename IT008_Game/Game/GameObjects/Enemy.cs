@@ -136,7 +136,7 @@ namespace IT008_Game.Game.GameObjects
         public void Shoot()
         {
             
-            Vector2 ShootDirection = GameMathConverter.Rotate(AimingDirection,0);
+            Vector2 ShootDirection = GameMathHelper.Rotate(AimingDirection,0);
             var bullet = new Bullet(ShootDirection,200);
             bullet.Setup(Sprite.Transform.Position + 50 * ShootDirection);
             if (SceneManager.CurrentScene is MainGameScene mg)
