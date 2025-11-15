@@ -11,7 +11,11 @@ namespace IT008_Game.Game.Scenes
     internal sealed class MainGameScene : GameScene
     {
         public static new string Name => "Game";
+        
         TableLayoutPanel? pauseMenu;
+        TableLayoutPanel? upgradeMenu;
+        Button? upBtn1, upBtn2, upBtn3;
+
         Player? player;
         public EnemySpawner? enemySpawner;
 
@@ -24,6 +28,9 @@ namespace IT008_Game.Game.Scenes
         {
             // We create the player, and enemies
             player = new();
+
+            player.LevelSystem.LevelUp += LevelSystem_LevelUp;
+
             enemySpawner = new EnemySpawner(player);
 
 
@@ -32,17 +39,52 @@ namespace IT008_Game.Game.Scenes
                 enemySpawner,
             ]);
 
-            //EnemyList.AddRange([
-            //     new Enemy(player)
-            //]);
-
             enemySpawner.NextWave();
 
             DrawPauseMenu();
+            DrawUpgradeMenu();
+            player.LevelSystem.AddLevel();
+        }
+
+        private void LevelSystem_LevelUp(object? sender, EventArgs e)
+        {
+            if (upgradeMenu is null) return;
+            upgradeMenu.Visible = true;
+            var upgrades = player?.LevelSystem?.GetUpgrades();
+
+            if (upgrades is not null)
+            {
+                SetUpgrade(upBtn1, upgrades[0]);
+                SetUpgrade(upBtn2, upgrades[1]);
+                SetUpgrade(upBtn3, upgrades[2]);
+                GameTime.TimeScale = 0;
+            }
+        }
+        private void SetUpgrade(Button? btn, PlayerUpgrade up)
+        {
+            if (btn is null) return;
+
+            var sign = up.Strat switch
+            {
+                UpgradeType.Addition => "+",
+                UpgradeType.AddPercentage => "+%",
+                UpgradeType.SubPercentage => "-%",
+                UpgradeType.Subtraction => "-",
+                _ => throw new NotImplementedException()
+            };
+
+            btn.Text = $"{up.Option} {sign} {up.Value}";
+        
         }
 
         public override void UnLoad()
         {
+            player.LevelSystem.LevelUp -= LevelSystem_LevelUp;
+            upBtn1.Click -= SelectUpgrade1;
+            upBtn2.Click -= SelectUpgrade3;
+            upBtn3.Click -= SelectUpgrade3;
+
+
             // We have to clean every objects when scene exit
             foreach (var item in EnemyList)
             {
@@ -109,14 +151,93 @@ namespace IT008_Game.Game.Scenes
             Controls.Add(pauseMenu);
         }
 
+        private void DrawUpgradeMenu()
+        {
+            var width = 600;
+            var height = 200;
+
+            upgradeMenu = new TableLayoutPanel()
+            {
+                Anchor = AnchorStyles.None,
+                Location = new Point(
+                    GameManager.VirtualWidth / 2 - width / 2,
+                    GameManager.VirtualHeight / 2 - height / 2
+                ),
+                BackColor = Color.Transparent,
+                Width = width,
+                Height = height,
+            };
+
+            upgradeMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            upgradeMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+
+            upgradeMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33f));
+            upgradeMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33f));
+            upgradeMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33f));
+
+             upBtn1 = new Button()
+            {
+                Dock = DockStyle.Fill,
+            };
+            upBtn2 = new Button()
+            {
+                Dock = DockStyle.Fill,
+            };
+            upBtn3 = new Button()
+            {
+                Dock = DockStyle.Fill,
+            };
+
+            upBtn1.Click += SelectUpgrade1;
+            upBtn2.Click += SelectUpgrade2;
+            upBtn3.Click += SelectUpgrade3;
+
+            upgradeMenu.Controls.Add(upBtn1, 0, 1);
+            upgradeMenu.Controls.Add(upBtn2, 1, 1);
+            upgradeMenu.Controls.Add(upBtn3, 2, 1);
+
+            var title = new Label
+            {
+                Text = "Upgrade",
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 20),
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = Color.White
+            };
+            upgradeMenu.Controls.Add(title, 0, 0);
+            upgradeMenu.SetColumnSpan(title, 3);
+
+            Controls.Add(upgradeMenu);
+            upgradeMenu.Visible = false;
+        }
+
+        private void SelectUpgrade3(object? sender, EventArgs e)
+        {
+            if (upgradeMenu is null) return;
+            upgradeMenu.Visible = false;
+           
+            player?.LevelSystem.SelectUpgrade(2);
+            GameTime.TimeScale = 1;
+        }
+
+        private void SelectUpgrade2(object? sender, EventArgs e)
+        {
+            if (upgradeMenu is null) return;
+            upgradeMenu.Visible = false;
+            player?.LevelSystem.SelectUpgrade(1);
+            GameTime.TimeScale = 1;
+        }
+
+        private void SelectUpgrade1(object? sender, EventArgs e)
+        {
+            if (upgradeMenu is null) return;
+            upgradeMenu.Visible = false;
+            player?.LevelSystem.SelectUpgrade(0);
+            GameTime.TimeScale = 1;
+        }
 
         public override void Update()
         {
-            // UPDATE THREAD
-            if (GameInput.GetKeyDown(Keys.X))
-            {
-                player?.Destroy();
-            }
 
             //anything to do with spawning waves
             enemySpawner.Update();
@@ -174,7 +295,11 @@ namespace IT008_Game.Game.Scenes
                 {
                     PauseGame();
                 }
+            }
 
+            if ((pauseMenu?.Visible ?? false) || (upgradeMenu?.Visible ?? false))
+            {
+                GameTime.TimeScale = 0;
             }
 
         }
