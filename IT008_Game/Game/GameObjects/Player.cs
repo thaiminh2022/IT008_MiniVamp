@@ -16,10 +16,10 @@ namespace IT008_Game.Game.GameObjects
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
 
-        public float HP = 500f;
-        public float MaxHP = 500f;
+        public float HP { get; set; } = 500f;
+        public float MaxHP { get; private set; } = 500f;
 
-        public int Level = 1;
+        public int Level { get; private set; } = 1;
 
         public Player()
         {

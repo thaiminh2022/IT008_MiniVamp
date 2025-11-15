@@ -2,7 +2,7 @@
 using IT008_Game.Core.System;
 using System.Numerics;
 
-namespace IT008_Game.Game.GameObjects.Boss
+namespace IT008_Game.Game.GameObjects.Boss.Introduction
 {
     internal class IntroductionBossSlash : GameObject
     {
