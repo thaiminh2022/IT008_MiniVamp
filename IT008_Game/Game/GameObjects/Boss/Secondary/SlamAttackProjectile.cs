@@ -1,5 +1,6 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.System;
+using IT008_Game.Game.GameObjects.PlayerCharacter;
 using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Secondary
@@ -12,8 +13,11 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
         bool dealDamage = false;
 
-        public SlamAttackProjectile()
+        Player _player;
+
+        public SlamAttackProjectile(Player player)
         {
+            _player = player;
             Sprite = new AnimatedSprite2D();
             Sprite.AddAnimation("boss2/whirl.png", "whirl", new AnimationConfig { 
                 TotalColumn = 4,
@@ -40,6 +44,10 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (waitTime <= 0)
             {
+                if (Sprite.CollidesWith(_player.Sprite)) {
+                    _player.HealthSystem.SubstractValue(10f);
+                }
+
                 Sprite.Play("whirl_explode");
                 if (Sprite.AnimationFinished())
                 {
@@ -52,7 +60,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             }
 
 
-                Sprite.Update();
+            Sprite.Update();
             base.Update();
         }
 

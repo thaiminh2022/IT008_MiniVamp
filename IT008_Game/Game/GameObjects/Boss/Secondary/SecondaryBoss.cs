@@ -10,7 +10,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
     internal class SecondaryBoss : GameObject
     {
         public readonly AnimatedSprite2D Sprite;
-        public readonly Player _player;
+        private readonly Player _player;
+        public HealthSystem HealthSystem { get; private set; }
 
         float _uniformScale = 7;
 
@@ -46,6 +47,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         public SecondaryBoss(Player player)
         {
             Sprite = new AnimatedSprite2D();
+            HealthSystem = new HealthSystem(1000);
             Sprite.AddAnimation("boss2/idle.png", "idle", new AnimationConfig
             {
                 TotalColumn = 6,
@@ -76,6 +78,9 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             Sprite.Transform.Scale = new Vector2(1, 1) * _uniformScale;
             Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth / 2f, GameManager.VirtualHeight / 2f);
             _player = player;
+
+            var hud = new BossHUD(HealthSystem, "P Diddy Slime");
+            Children.Add(hud);
         }
 
         public override void Update()
@@ -105,7 +110,6 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             }
 
-
             Sprite.Update();
             base.Update();
         }
@@ -126,7 +130,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             if (_didFireCircle) return;
             
             _didFireCircle = true;
-            var fire = new FireCircle();
+            var fire = new FireCircle(_player);
             Children.Add(fire);   
         }
             
@@ -149,17 +153,24 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             {
                 // impact
                 _didBite = true;
-                for (int i = 0; i < 5; i++)
+
+                if (HealthSystem.GetValueNormalized() <= .75f)
                 {
-                    var proj = new TornadoProjectile(RandomPosition());
-                    Children.Add(proj);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var proj = new TornadoProjectile(RandomPosition(true, 300f), _player);
+                        Children.Add(proj);
+                    }
                 }
+                
 
                 var dist = Vector2.Distance(Sprite.Transform.Position, _player.Sprite.Transform.Position);
                 var radius = 128f;
                 if (dist <= radius)
                 {
-                   // damage player
+                    // damage player
+                    _player.HealthSystem.SubstractValue(20f);
+
                 }
             }
            
@@ -175,9 +186,9 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (_didSlamed && Sprite.AnimationFinished())
             {
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    var proj = new SlamAttackProjectile();
+                    var proj = new SlamAttackProjectile(_player);
                     proj.Sprite.Transform.Position = RandomPosition();
 
                     Children.Add(proj);
@@ -191,12 +202,20 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         {
             if (_timeBtwIdle <= 0)
             {
-                _currentState = ChooseState();
+                if (_didFireCircle && HealthSystem.GetValueNormalized() < .25f)
+                {
+                    _currentState = State.LimitPlayer;
+                }else
+                {
+                    _currentState = ChooseState();
+                }
+
+
                 _didSlamed = false;
                 _didBite = false;
                 _moveToPlayer = false;
-                _didFireCircle = false;
 
+                _startTimeBtwIdle = _rng.Next(1, 2);
                 _timeBtwIdle = _startTimeBtwIdle;
             }
             else
@@ -219,13 +238,18 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
         public override void Draw(Graphics g)
         {
+            if (GameManager.DebugMode)
+            {
+                g.DrawCircle(Sprite.Transform.Position.ToPointF(), 128, new Pen(Color.AliceBlue, 3));
+            }
+
             base.Draw(g);
             g.DrawSprite(Sprite);
         }
 
-        private Vector2 RandomPosition(bool fromPlayer = false)
+        private Vector2 RandomPosition(bool fromPlayer = false, float radius = 500f)
         {
-            var pos = _rng.NextInsideUnitCircle() * 500f;
+            var pos = _rng.NextInsideUnitCircle() * radius;
             return pos + (fromPlayer ? _player.Sprite.Transform.Position : Sprite.Transform.Position);
         }
 
@@ -234,6 +258,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             State[] normalStates =
             [
                 State.SlamAttack,
+                State.BiteAttack,
+                State.BiteAttack,
                 State.BiteAttack,
                 State.TwoWaySlash
             ];

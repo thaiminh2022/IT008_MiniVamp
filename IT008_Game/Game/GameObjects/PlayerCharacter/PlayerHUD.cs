@@ -17,8 +17,8 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             _player = player;
             DrawLayer = 1000;
 
-            _lastValue = 0;
             _wantToValue = _player.HealthSystem.GetValue();
+            _lastValue = _wantToValue;
 
             _player.HealthSystem.OnHealthChange += HealthSystem_OnHealthChange;
         }

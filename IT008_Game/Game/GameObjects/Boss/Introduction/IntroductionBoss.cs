@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Introduction
 {
-    internal class IntroductionBoss : GameObject, IBoss
+    internal class IntroductionBoss : GameObject
     {
         enum Attacks
         {
@@ -14,7 +14,6 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
             MeleeAOE,
             RangeAOE,
         }
-
 
         AnimatedSprite2D Sprite;
 
@@ -31,24 +30,14 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
 
         // Stats
 
-        private float _health;
-
-        public float Health
-        {
-            get { return _health; }
-            set { _health = value; 
-                if (_health < 0)
-                {
-                    Destroy();
-                }
-            
-            }
-        }
-
+        public HealthSystem HealthSystem { get; private set; }
 
         // Start function
         public IntroductionBoss(Player player)
         {
+            HealthSystem = new HealthSystem(500f);
+            HealthSystem.OnDead += HealthSystem_OnDead;
+
             Sprite = new AnimatedSprite2D();
 
             Sprite.AddAnimation("boss/idle.png", "idle", new AnimationConfig
@@ -78,9 +67,20 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
 
             Sprite.Play("idle");
 
-            BossHUD hud = new BossHUD(this);
+            BossHUD hud = new BossHUD(HealthSystem, "Yamaguchi Epstein");
             Children.Add(hud);
 
+        }
+
+        private void HealthSystem_OnDead(object? sender, EventArgs e)
+        {
+            Destroy();
+        }
+
+        public override void OnDestroy()
+        {
+            HealthSystem.OnDead -= HealthSystem_OnDead;
+            base.OnDestroy();
         }
 
 
@@ -166,6 +166,5 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
             // Keep this so its children will draw
             base.Draw(g);
         }
-
     }
 }

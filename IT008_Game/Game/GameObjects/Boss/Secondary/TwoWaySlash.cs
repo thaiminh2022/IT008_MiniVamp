@@ -54,13 +54,17 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             RightSlash.Update();
 
 
-            if (LeftSlash.CollidesWith(_player.Sprite))
+            if (LeftSlash.CollidesWith(_player.Sprite) && !WillDestroyNextFrame)
             {
                 // Deal damage;
+                _player.HealthSystem.SubstractValue(10f);
+                Destroy();
             }
-            if (RightSlash.CollidesWith(_player.Sprite)) { 
-            
+            if (RightSlash.CollidesWith(_player.Sprite) && !WillDestroyNextFrame) {
+
                 // Deal damage;
+                _player.HealthSystem.SubstractValue(10f);
+                Destroy();
             }
 
             if (timeBtwDestroy > 0)

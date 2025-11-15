@@ -28,7 +28,7 @@ namespace IT008_Game.Game.Scenes
             Children.AddRange([
                 player,
                 spawner,
-                new IntroductionBoss(player)
+                new SecondaryBoss(player)
             ]);
 
             EnemyList.AddRange([
