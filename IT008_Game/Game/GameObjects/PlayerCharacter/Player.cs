@@ -4,7 +4,7 @@ using IT008_Game.Core.System;
 using IT008_Game.Game.Scenes;
 using System.Numerics;
 
-namespace IT008_Game.Game.GameObjects
+namespace IT008_Game.Game.GameObjects.PlayerCharacter
 {
     internal sealed class Player : GameObject
     {
@@ -15,88 +15,70 @@ namespace IT008_Game.Game.GameObjects
         private float _dashCooldown = 0.5f; // Time before dash can be used again
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
-        
-        public float HP { get; set; } = 500f;
-        public float MaxHP { get; private set; } = 500f;
-        
-        public bool _isInvulnerable = false;
-        private float _invulnerableTimer = 0f;
 
-        public int Level { get; private set; } = 1;
+        public HealthSystem HealthSystem { get; private set; }  
+        public PlayerLevelSystem LevelSystem { get; private set; }
 
         public Player()
         {
+            HealthSystem = new HealthSystem(100);
+            LevelSystem = new PlayerLevelSystem(100);
             Sprite = new(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );
             Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth / 2, GameManager.VirtualHeight / 2);
             Sprite.Transform.Scale = new Vector2(0.5f, 0.5f);
+
+            var hud = new PlayerHUD(this);
+            Children.Add(hud);
         }
 
 
         public override void Update()
         {
-            var rawInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
-                               GameInput.GetAxis(Axis.Vertical));
+            HandleMoving();
+            HandleDashing();
+            HandleShooting();
+            HandleClamping();
 
-            // Only update last move direction if there is input
-            if (rawInput.LengthSquared() > 0)
+            if (HealthSystem.GetValue() <= 0)
             {
-                _lastMoveDir = Vector2.Normalize(rawInput);
-
-                // turning
-                if (_lastMoveDir.X < 0)
-                    Sprite.Transform.Scale = new Vector2(-Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
-                else if (_lastMoveDir.X > 0)
-                    Sprite.Transform.Scale = new Vector2(Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
+                SpawnExplosion();
+                Destroy();
             }
 
-            // Moving
-            var moveVec = rawInput * _speed * GameTime.DeltaTime;
-            Sprite.Transform.Translate(moveVec);
+            base.Update();
+        }
 
-            // Cooldown on dash
-            if (_dashTimer > 0)
-                _dashTimer -= GameTime.DeltaTime;
-            
-            // Dash
-            if (GameInput.GetKeyDown(Keys.F) && _dashTimer <= 0)
-            {
-                var dashInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
-                                            GameInput.GetAxis(Axis.Vertical));
+        private void HandleClamping()
+        {
 
-                Vector2 dashDir = dashInput.LengthSquared() > 0
-                    ? Vector2.Normalize(dashInput)
-                    : _lastMoveDir;
+            // Clamp player inside screen bounds
+            var pos = Sprite.Transform.Position;
 
-                Sprite.Transform.Translate(dashDir * _dashDistance);
-                _lastMoveDir = dashDir; // keep facing consistent
-                _dashTimer = _dashCooldown;
+            // Half‑size of sprite (so we clamp by edges, not center)
+            float halfW = Sprite.Region.Width * MathF.Abs(Sprite.Transform.Scale.X) / 2f;
+            float halfH = Sprite.Region.Height * MathF.Abs(Sprite.Transform.Scale.Y) / 2f;
 
-                //immortal for a sec
-                _isInvulnerable = true;
-                _invulnerableTimer = 0.15f;
-            }
+            // Clamp X between left and right edges
+            pos.X = Math.Clamp(pos.X, halfW, GameManager.VirtualWidth - halfW);
 
-            if (_isInvulnerable)
-            {
-                _invulnerableTimer -= GameTime.DeltaTime;
-                if (_invulnerableTimer <= 0f)
-                {
-                    _isInvulnerable = false;
-                }
-            }
+            // Clamp Y between top and bottom edges
+            pos.Y = Math.Clamp(pos.Y, halfH, GameManager.VirtualHeight - halfH);
 
+            Sprite.Transform.Position = pos;
+        }
+
+        private void HandleShooting()
+        {
             // Shooting
             if (GameInput.GetKeyDown(Keys.Space) || GameInput.GetMouseButtonDown(MouseButtons.Left))
             {
-                switch (Level)
+                switch (LevelSystem.Level)
                 {
                     case 1:
-                        // Get mouse position relative to game window
-                        //System.Drawing.Point mouseScreen = System.Windows.Forms.Control.MousePosition;
-                        System.Drawing.Point mouseClient = GameForm.MousePosition;
-                        Vector2 mousePos = new Vector2(mouseClient.X, mouseClient.Y);
+
+                        var mousePos = GameInput.MousePosition;
 
                         // Player position
                         Vector2 playerPos = Sprite.Transform.Position;
@@ -148,32 +130,51 @@ namespace IT008_Game.Game.GameObjects
                         break;
                 }
 
+    
+
                 AudioManager.ShootSound.Play();
             }
+        }
 
-            // Clamp player inside screen bounds
-            var pos = Sprite.Transform.Position;
+        private void HandleDashing()
+        {
+            // Cooldown on dash
+            if (_dashTimer > 0)
+                _dashTimer -= GameTime.DeltaTime;
 
-            // Half‑size of sprite (so we clamp by edges, not center)
-            float halfW = (Sprite.Region.Width * MathF.Abs(Sprite.Transform.Scale.X)) / 2f;
-            float halfH = (Sprite.Region.Height * MathF.Abs(Sprite.Transform.Scale.Y)) / 2f;
-
-            // Clamp X between left and right edges
-            pos.X = Math.Clamp(pos.X, halfW, GameManager.VirtualWidth - halfW);
-
-            // Clamp Y between top and bottom edges
-            pos.Y = Math.Clamp(pos.Y, halfH, GameManager.VirtualHeight - halfH);
-
-            Sprite.Transform.Position = pos;
-
-            if (HP <= 0)
+            // Dash
+            if (GameInput.GetKeyDown(Keys.F) && _dashTimer <= 0)
             {
-                SpawnExplosion();
-                Destroy();
+                var dashInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
+                                            GameInput.GetAxis(Axis.Vertical));
+
+                Vector2 dashDir = dashInput.LengthSquared() > 0
+                    ? Vector2.Normalize(dashInput)
+                    : _lastMoveDir;
+
+                Sprite.Transform.Translate(dashDir * _dashDistance);
+                _lastMoveDir = dashDir; // keep facing consistent
+                _dashTimer = _dashCooldown;
+            }
+        }
+
+        private void HandleMoving()
+        {
+            var rawInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
+                               GameInput.GetAxis(Axis.Vertical));
+
+            // Only update last move direction if there is input
+            if (rawInput.LengthSquared() > 0)
+            {
+                _lastMoveDir = Vector2.Normalize(rawInput);
             }
 
+     
 
-            base.Update();
+
+            // Moving
+            var moveVec = rawInput * _speed * GameTime.DeltaTime;
+            Sprite.Transform.Translate(moveVec);
         }
 
         private void SpawnBullet(Vector2 dir, bool homing = false)
@@ -198,25 +199,6 @@ namespace IT008_Game.Game.GameObjects
         public override void Draw(Graphics g)
         {
             g.DrawSprite(Sprite);
-
-            SolidBrush green = new SolidBrush(Color.Green);
-            SolidBrush gray = new SolidBrush(Color.Gray);
-       
-            // --- UI Health Bar ---
-            float hpRatio = Math.Clamp(HP / MaxHP, 0f, 1f);
-
-            // Position at bottom center of screen
-            float barWidth = 500f;   // desired width in pixels
-            float barHeight = 20f;   // desired height in pixels
-            float x = (GameManager.VirtualWidth - barWidth) / 2f;
-            float y = GameManager.VirtualHeight - barHeight - 75f; // 10px above bottom
-
-            // Draw background (gray)
-            g.FillRectangle(gray, x, y, barWidth, barHeight);
-
-            // Draw foreground (red) scaled by HP
-            g.FillRectangle(green, x, y, barWidth * hpRatio, barHeight);
-
             base.Draw(g);
         }
 

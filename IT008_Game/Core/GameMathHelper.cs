@@ -32,5 +32,17 @@ namespace IT008_Game.Core
                 v.X * sin + v.Y * cos
             );
         }
+        public static void DrawCircle(this Graphics g, PointF center, float radius, Pen pen)
+        {
+            float diameter = radius * 2f;
+            g.DrawEllipse(
+                pen,
+                center.X - radius,
+                center.Y - radius,
+                diameter,
+                diameter
+            );
+        }
+
     }
 }

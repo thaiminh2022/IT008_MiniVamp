@@ -1,11 +1,13 @@
 ﻿using IT008_Game.Core.System;
+using System.Security.Policy;
 
 namespace IT008_Game.Core.Components
 {
     internal abstract class GameObject : IDisposable
     {
-        public bool WillDestroyNextFrame { get; private set; } = false;
+        public int DrawLayer = 0;
 
+        public bool WillDestroyNextFrame { get; private set; } = false;
         public GameObjectList Children { get; private set; } = [];
         public GameObjectList? Parent { get; set; }
 
