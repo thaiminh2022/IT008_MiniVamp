@@ -8,12 +8,10 @@
         public event EventHandler? OnDead;
         public event EventHandler? OnHealthChange;
 
-        bool _isDead;
-        public bool IsDead => _isDead;
+        public bool IsDead => _value <= 0;
 
         public HealthSystem(float maxValue) : base(maxValue)
         {
-            _isDead = false;
         }
 
         public override void AddValue(float amount)
@@ -29,7 +27,7 @@
         }
         public override void SubstractValue(float amount)
         {
-            if (_isDead)
+            if (IsDead)
                 return;
 
             base.SubstractValue(amount);
@@ -37,7 +35,6 @@
 
             if (GetValue() <= 0f)
             {
-                _isDead = true;
                 OnDead?.Invoke(this, EventArgs.Empty);
             }
         }

@@ -45,9 +45,10 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (waitTime <= 0)
             {
-                if (Sprite.CollidesWith(_player.Sprite))
+                if (Sprite.CollidesWith(_player.Sprite) && !WillDestroyNextFrame)
                 {
                     _player.HealthSystem.SubstractValue(10f);
+                    Destroy();
                 }
 
                 Sprite.Play("whirl_explode");

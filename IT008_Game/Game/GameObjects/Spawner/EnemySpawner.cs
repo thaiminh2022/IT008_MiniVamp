@@ -1,6 +1,8 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
+using IT008_Game.Game.GameObjects.Boss.Introduction;
+using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.EnemyTypes;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.Scenes;
@@ -66,31 +68,46 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
         public EnemySpawner(Player _player)
         {
-            var wave1 = new Wave([
-                new EnemyData(() => {
-                    var enemy = new Enemy(_player);
-                    enemy.Sprite.Transform.Position = GetRandomPostition();
-                    return enemy;
-                }),
-                new EnemyData(() => {
-                    var enemy = new Enemy_Normal(_player);
-                    enemy.Sprite.Transform.Position = GetRandomPostition();
-                    return enemy;
-                })
-            ], 10);
+            //var wave1 = new Wave([
+            //    new EnemyData(() => {
+            //        var enemy = new Enemy(_player);
+            //        enemy.Sprite.Transform.Position = GetRandomPostition();
+            //        return enemy;
+            //    }),
+            //    new EnemyData(() => {
+            //        var enemy = new Enemy_Normal(_player);
+            //        enemy.Sprite.Transform.Position = GetRandomPostition();
+            //        return enemy;
+            //    })
+            //], 10);
 
-            var wave2 = new Wave([
-                new EnemyData(() => {
-                        var enemy = new Enemy(_player);
-                        enemy.Sprite.Transform.Position = GetRandomPostition();
-                        return enemy;
+            //var wave2 = new Wave([
+            //    new EnemyData(() => {
+            //            var enemy = new Enemy(_player);
+            //            enemy.Sprite.Transform.Position = GetRandomPostition();
+            //            return enemy;
+            //        })
+            //], 10);
+
+            // every boss weight is 100
+            var wave3 = new Wave([
+                 new EnemyData(() => {
+                        return new IntroductionBoss(_player);
                     })
-            ], 10);
+            ], 100);
+
+            var wave4 = new Wave([
+                 new EnemyData(() => {
+                        return new SecondaryBoss(_player);
+                    })
+            ], 100);
 
             // Setup wave data here
             _waves = [
-                wave1,
-                wave2
+                //wave1,
+                //wave2,
+                wave3,
+                wave4,
             ];
             _rng = new Random();
             _currentState = SpawnerState.Ready;
@@ -136,15 +153,19 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 var enemyIdx = _rng.Next(wave.PossibleEnemies.Count);
                 var data = wave.PossibleEnemies[enemyIdx];
 
-                var enemy = data() as Enemy;
-                _currentWaveWorth -= enemy.EnemyWeight;
+                var enemy = data();
 
-                if (SceneManager.CurrentScene is MainGameScene mg)
+                if (enemy is IEnemy iEnemy)
                 {
-                    mg.EnemyList.Add(enemy);
+                    _currentWaveWorth -= iEnemy.GetWeight();
 
+                    if (SceneManager.CurrentScene is MainGameScene mg)
+                    {
+                        mg.EnemyList.Add(enemy);
+
+                    }
+                    _timeBtwSpawn = wave.WaveTimeBtwSpawn;
                 }
-                _timeBtwSpawn = wave.WaveTimeBtwSpawn;
             }
             else
             {

@@ -18,12 +18,18 @@ namespace IT008_Game.Game.GameObjects.Boss
         public BossHUD(HealthSystem bossSystem, string bossName = "")
         {
             _bossSystem = bossSystem;
+            _bossSystem.OnHealthChange += BossSystem_OnHealthChange;
             _bossName = bossName;
 
             _updateSpeed = bossSystem.GetMaxValue();
 
             _lastValue = 0;
             _wantToValue = _bossSystem.GetMaxValue();
+        }
+
+        private void BossSystem_OnHealthChange(object? sender, EventArgs e)
+        {
+            _wantToValue = _bossSystem.GetValue();
         }
 
         public override void Update()
@@ -41,9 +47,15 @@ namespace IT008_Game.Game.GameObjects.Boss
                 {
                     _lastValue += Math.Sign(diff) * maxDelta;
                 }
-                //Console.WriteLine($"want: {_wantToValue}, last: {_lastValue}, diff: {diff}, sign: {MathF.Sign(diff)}");
+                Console.WriteLine($"want: {_wantToValue}, last: {_lastValue}, diff: {diff}, sign: {MathF.Sign(diff)}");
 
             }
+        }
+
+        public override void OnDestroy()
+        {
+            _bossSystem.OnHealthChange -= BossSystem_OnHealthChange;
+            base.OnDestroy();
         }
 
         public override void Draw(Graphics g)

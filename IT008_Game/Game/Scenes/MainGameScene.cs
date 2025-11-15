@@ -130,16 +130,17 @@ namespace IT008_Game.Game.Scenes
             // ENEMY ON BULLET COLLISION
             for (int i = 0; i < EnemyList.Count; i++)
             {
-                var enemy = EnemyList[i] as Enemy;
+                var enemy = EnemyList[i] as IEnemy;
+                var enemySprite = enemy.GetSprite();
 
                 for (int j = 0; j < BulletList.Count; j++)
                 {
                     var bullet = BulletList[j] as Bullet;
-                    if (enemy.Sprite.CollidesWith(bullet.Sprite) && !bullet.WillDestroyNextFrame)
+                    if (enemySprite.CollidesWith(bullet.Sprite) && !bullet.WillDestroyNextFrame)
                     {
                         Console.WriteLine("hit");
                         bullet.Destroy();
-                        enemy.Damaged();
+                        enemy.Damage(10);
                     }
                 }
             }
@@ -151,7 +152,7 @@ namespace IT008_Game.Game.Scenes
                 {
                     Console.WriteLine("player got hit");
                     bullet.Destroy();
-                    //player.Damaged();
+                    player.HealthSystem.SubstractValue(5f);
                 }
             }
 

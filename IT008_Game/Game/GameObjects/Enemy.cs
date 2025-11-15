@@ -8,11 +8,13 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects
 {
-    internal class Enemy : GameObject
+    internal class Enemy : GameObject, IEnemy
     {
         public Sprite2D Sprite;
-        public int MaxHealth = 10;
-        public int CurrentHealth;
+
+        public HealthSystem HealthSystem;
+
+
         public int Damage = 1;
         public float MovementSpeed = 50f;
         public short EnemyID = 0;
@@ -39,10 +41,10 @@ namespace IT008_Game.Game.GameObjects
         //player target
         private Sprite2D _target;
 
-        public Enemy(Player? ChaseTarget, float DifficultyLvl = 1f)
+        public Enemy(Player ChaseTarget, float DifficultyLvl = 1f)
         {
             _target = ChaseTarget.Sprite;
-            CurrentHealth = MaxHealth;
+            HealthSystem = new HealthSystem(10);
             EnemyDiffLvl = DifficultyLvl;
 
             int size = 100;
@@ -64,7 +66,7 @@ namespace IT008_Game.Game.GameObjects
         public void Damaged()
         {
             AudioManager.HitSound.Play();
-            CurrentHealth--;
+            HealthSystem.SubstractValue(1);
         }
 
         public override void Draw(Graphics g)
@@ -104,7 +106,7 @@ namespace IT008_Game.Game.GameObjects
             ClockWork();
             if (ChargeTimer <= ChargeTime) LinearChase();
 
-            if (CurrentHealth < 0)
+            if (HealthSystem.IsDead)
             {
                 Destroy();
             }
@@ -145,6 +147,21 @@ namespace IT008_Game.Game.GameObjects
             AudioManager.ShootSound.Play();
 
 
+        }
+
+        public int GetWeight()
+        {
+            return EnemyWeight;
+        }
+
+        public Sprite2D GetSprite()
+        {
+            return Sprite;
+        }
+
+        void IEnemy.Damage(int _)
+        {
+            Damaged();
         }
     }
 }
