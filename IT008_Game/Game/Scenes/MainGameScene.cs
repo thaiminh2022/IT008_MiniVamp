@@ -4,6 +4,7 @@ using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
 using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.Spawner;
+using System;
 
 
 namespace IT008_Game.Game.Scenes
@@ -133,7 +134,7 @@ namespace IT008_Game.Game.Scenes
             EnemyBulletList.Update();
 
             
-            // EXAMPLE BULLET COLLISION
+            // ENEMY ON BULLET COLLISION
             for (int i = 0; i < EnemyList.Count; i++)
             {
                 var enemy = EnemyList[i] as Enemy;
@@ -147,6 +148,17 @@ namespace IT008_Game.Game.Scenes
                         bullet.Destroy();
                         enemy.Damaged();
                     }
+                }
+            }
+            // PLAYER ON BULLET COLLISION
+            for (int j = 0; j < EnemyBulletList.Count; j++)
+            {
+                var bullet = EnemyBulletList[j] as Bullet;
+                if (player.Sprite.CollidesWith(bullet.Sprite) && !bullet.WillDestroyNextFrame)
+                {
+                    Console.WriteLine("player got hit");
+                    bullet.Destroy();
+                    //player.Damaged();
                 }
             }
 

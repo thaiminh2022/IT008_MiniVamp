@@ -18,6 +18,7 @@ namespace IT008_Game.Game.GameObjects
 
         //spawn multiple enemies vs single hard enemy
         public int EnemyWeight = 2;
+        public float EnemyDiffLvl = 1;
 
         //AimingDirection
         private Vector2 AimingDirection = Vector2.Zero;
@@ -37,10 +38,11 @@ namespace IT008_Game.Game.GameObjects
         //player target
         private Sprite2D _target;
 
-        public Enemy(Player? ChaseTarget,float Difficulty = 1f)
+        public Enemy(Player? ChaseTarget,float DifficultyLvl = 1f)
         {
              _target = ChaseTarget.Sprite;
             CurrentHealth = MaxHealth;
+            EnemyDiffLvl = DifficultyLvl;
 
             int size = 100;
             Bitmap redSquare = new Bitmap(size, size);
