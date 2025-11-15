@@ -86,11 +86,13 @@ namespace IT008_Game.Core.Components
             if (s.Texture is null)
                 return;
 
-            var drawPos = s.Transform.Position - s.Transform.Pivot;
-            g.TranslateTransform(drawPos.X, drawPos.Y);
+            // var drawPos = s.Transform.Position - s.Transform.Pivot;
+            g.TranslateTransform(s.Transform.Position.X, s.Transform.Position.Y);
             g.RotateTransform(s.Transform.RotationDeg);
             g.ScaleTransform(s.Transform.Scale.X, s.Transform.Scale.Y);
 
+            var pivot = s.Transform.Pivot / s.Transform.Scale;
+            g.TranslateTransform(-pivot.X, -pivot.Y);
 
             g.DrawImage(s.Texture,
                 new RectangleF(0, 0, s.Region.Width, s.Region.Height),

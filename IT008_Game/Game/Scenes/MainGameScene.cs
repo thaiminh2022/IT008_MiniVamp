@@ -2,7 +2,7 @@
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects;
-using IT008_Game.Game.GameObjects.Boss;
+using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.Spawner;
 
 
@@ -149,6 +149,7 @@ namespace IT008_Game.Game.Scenes
                     }
                 }
             }
+
 
             // BASE
             base.Update();
