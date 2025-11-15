@@ -71,9 +71,22 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 switch (LevelSystem.Level)
                 {
                     case 1:
-                        // Normal single shot in last move direction
-                        SpawnBullet(_lastMoveDir);
-                        break;
+                        // Get mouse position relative to game window
+                        //System.Drawing.Point mouseScreen = System.Windows.Forms.Control.MousePosition;
+                        System.Drawing.Point mouseClient = GameForm.MousePosition;
+                        Vector2 mousePos = new Vector2(mouseClient.X, mouseClient.Y);
+
+                        // Player position
+                        Vector2 playerPos = Sprite.Transform.Position;
+
+                        // Direction vector
+                        Vector2 toMouse = mousePos - playerPos;
+                        if (toMouse.LengthSquared() > 0)
+                        {
+                            Vector2 dir = Vector2.Normalize(toMouse);
+                            SpawnBullet(dir);
+                        }
+                        break; ;
 
                     case 2:
                         // Shoot in 4 directions (up, down, left, right)
@@ -96,6 +109,20 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                     case 4:
                         // Shoot one homing bullet
                         SpawnBullet(_lastMoveDir, homing: true);
+                        break;
+                    case 5:
+                        SpawnBullet(Vector2.Normalize(new Vector2(1, 1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(-1, 1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(1, -1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(-1, -1)), homing: true);
+                        break;
+                    case 6:
+                        for (int i = 0; i < 8; i++)
+                        {
+                            float angle = MathF.PI / 4 * i; // 45° increments
+                            var dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+                            SpawnBullet(dir, homing: true);
+                        }
                         break;
                 }
 
@@ -135,12 +162,12 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             {
                 _lastMoveDir = Vector2.Normalize(rawInput);
 
-                // turning
-                if (_lastMoveDir.X < 0)
-                    Sprite.Transform.Scale = new Vector2(-Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
-                else if (_lastMoveDir.X > 0)
-                    Sprite.Transform.Scale = new Vector2(Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
+            if (HP <= 0)
+            {
+                SpawnExplosion();
+                Destroy();
             }
+
 
             // Moving
             var moveVec = rawInput * _speed * GameTime.DeltaTime;
@@ -156,11 +183,21 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 mg.BulletList.Add(bullet);
         }
 
+        private void SpawnExplosion()
+        {
+            var explosion = new Explosion(Sprite.Transform.Position);
+            if (SceneManager.CurrentScene is MainGameScene mg)
+            {
+                mg.Children.Add(explosion); // or mg.BulletList.Add(explosion) if you want it managed there
+            }
+        }
+
 
         public override void Draw(Graphics g)
         {
             g.DrawSprite(Sprite);
             base.Draw(g);
         }
+
     }
 }

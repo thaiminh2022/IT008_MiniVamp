@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Spawner
 {
-    using EnemyData = KeyValuePair<Func<GameObject>, int>;
+    using EnemyData = Func<GameObject>;
     internal class EnemySpawner : GameObject
     {
         /// <summary>
@@ -65,18 +65,23 @@ namespace IT008_Game.Game.GameObjects.Spawner
         {
             var wave1 = new Wave([
                 new EnemyData(() => {
-                    var enemy = new TestSpawnerEnemy();
+                    var enemy = new Enemy(_player);
                     enemy.Sprite.Transform.Position = GetRandomPostition();
                     return enemy;
-                }, 5)
+                }),
+                new EnemyData(() => {
+                    var enemy = new Enemy_Normal(_player);
+                    enemy.Sprite.Transform.Position = GetRandomPostition();
+                    return enemy;
+                })
             ], 10);
 
             var wave2 = new Wave([
                 new EnemyData(() => {
-                        var enemy = new TestSpawnerEnemy();
+                        var enemy = new Enemy(_player);
                         enemy.Sprite.Transform.Position = GetRandomPostition();
                         return enemy;
-                    }, 2)
+                    })
             ], 10);
 
             // Setup wave data here
@@ -126,10 +131,15 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 var enemyIdx = _rng.Next(wave.PossibleEnemies.Count);
                 var data  = wave.PossibleEnemies[enemyIdx];
 
-                var enemy = data.Key();
-                _currentWaveWorth -= data.Value;
+                var enemy = data() as Enemy;
+                _currentWaveWorth -= enemy.EnemyWeight;
 
                 Children.Add(enemy);
+                if (SceneManager.CurrentScene is MainGameScene mg)
+                {
+                    mg.EnemyList.Add(enemy);
+
+                }
                 _timeBtwSpawn = wave.WaveTimeBtwSpawn;
             }else
             {
