@@ -17,12 +17,12 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         private Vector2 _lastMoveDir = new Vector2(1, 0);
 
         public HealthSystem HealthSystem { get; private set; }  
-
-        public int Level { get; private set; } = 1;
+        public PlayerLevelSystem LevelSystem { get; private set; }
 
         public Player()
         {
             HealthSystem = new HealthSystem(100);
+            LevelSystem = new PlayerLevelSystem(100);
             Sprite = new(
                 AssetsBundle.LoadImageBitmap("dino.png")
             );
@@ -36,48 +36,39 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         public override void Update()
         {
-            var rawInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
-                               GameInput.GetAxis(Axis.Vertical));
+            HandleMoving();
+            HandleDashing();
+            HandleShooting();
+            HandleClamping();
 
-            // Only update last move direction if there is input
-            if (rawInput.LengthSquared() > 0)
-            {
-                _lastMoveDir = Vector2.Normalize(rawInput);
+            base.Update();
+        }
 
-                // turning
-                if (_lastMoveDir.X < 0)
-                    Sprite.Transform.Scale = new Vector2(-Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
-                else if (_lastMoveDir.X > 0)
-                    Sprite.Transform.Scale = new Vector2(Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
-            }
+        private void HandleClamping()
+        {
 
-            // Moving
-            var moveVec = rawInput * _speed * GameTime.DeltaTime;
-            Sprite.Transform.Translate(moveVec);
+            // Clamp player inside screen bounds
+            var pos = Sprite.Transform.Position;
 
-            // Cooldown on dash
-            if (_dashTimer > 0)
-                _dashTimer -= GameTime.DeltaTime;
+            // Half‑size of sprite (so we clamp by edges, not center)
+            float halfW = Sprite.Region.Width * MathF.Abs(Sprite.Transform.Scale.X) / 2f;
+            float halfH = Sprite.Region.Height * MathF.Abs(Sprite.Transform.Scale.Y) / 2f;
 
-            // Dash
-            if (GameInput.GetKeyDown(Keys.F) && _dashTimer <= 0)
-            {
-                var dashInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
-                                            GameInput.GetAxis(Axis.Vertical));
+            // Clamp X between left and right edges
+            pos.X = Math.Clamp(pos.X, halfW, GameManager.VirtualWidth - halfW);
 
-                Vector2 dashDir = dashInput.LengthSquared() > 0
-                    ? Vector2.Normalize(dashInput)
-                    : _lastMoveDir;
+            // Clamp Y between top and bottom edges
+            pos.Y = Math.Clamp(pos.Y, halfH, GameManager.VirtualHeight - halfH);
 
-                Sprite.Transform.Translate(dashDir * _dashDistance);
-                _lastMoveDir = dashDir; // keep facing consistent
-                _dashTimer = _dashCooldown;
-            }
+            Sprite.Transform.Position = pos;
+        }
 
+        private void HandleShooting()
+        {
             // Shooting
             if (GameInput.GetKeyDown(Keys.Space) || GameInput.GetMouseButtonDown(MouseButtons.Left))
             {
-                switch (Level)
+                switch (LevelSystem.Level)
                 {
                     case 1:
                         // Normal single shot in last move direction
@@ -110,24 +101,50 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
                 AudioManager.ShootSound.Play();
             }
+        }
 
-            // Clamp player inside screen bounds
-            var pos = Sprite.Transform.Position;
+        private void HandleDashing()
+        {
+            // Cooldown on dash
+            if (_dashTimer > 0)
+                _dashTimer -= GameTime.DeltaTime;
 
-            // Half‑size of sprite (so we clamp by edges, not center)
-            float halfW = Sprite.Region.Width * MathF.Abs(Sprite.Transform.Scale.X) / 2f;
-            float halfH = Sprite.Region.Height * MathF.Abs(Sprite.Transform.Scale.Y) / 2f;
+            // Dash
+            if (GameInput.GetKeyDown(Keys.F) && _dashTimer <= 0)
+            {
+                var dashInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
+                                            GameInput.GetAxis(Axis.Vertical));
 
-            // Clamp X between left and right edges
-            pos.X = Math.Clamp(pos.X, halfW, GameManager.VirtualWidth - halfW);
+                Vector2 dashDir = dashInput.LengthSquared() > 0
+                    ? Vector2.Normalize(dashInput)
+                    : _lastMoveDir;
 
-            // Clamp Y between top and bottom edges
-            pos.Y = Math.Clamp(pos.Y, halfH, GameManager.VirtualHeight - halfH);
+                Sprite.Transform.Translate(dashDir * _dashDistance);
+                _lastMoveDir = dashDir; // keep facing consistent
+                _dashTimer = _dashCooldown;
+            }
+        }
 
-            Sprite.Transform.Position = pos;
+        private void HandleMoving()
+        {
+            var rawInput = new Vector2(GameInput.GetAxis(Axis.Horizontal),
+                               GameInput.GetAxis(Axis.Vertical));
 
+            // Only update last move direction if there is input
+            if (rawInput.LengthSquared() > 0)
+            {
+                _lastMoveDir = Vector2.Normalize(rawInput);
 
-            base.Update();
+                // turning
+                if (_lastMoveDir.X < 0)
+                    Sprite.Transform.Scale = new Vector2(-Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
+                else if (_lastMoveDir.X > 0)
+                    Sprite.Transform.Scale = new Vector2(Math.Abs(Sprite.Transform.Scale.X), Sprite.Transform.Scale.Y);
+            }
+
+            // Moving
+            var moveVec = rawInput * _speed * GameTime.DeltaTime;
+            Sprite.Transform.Translate(moveVec);
         }
 
         private void SpawnBullet(Vector2 dir, bool homing = false)
@@ -142,8 +159,6 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         public override void Draw(Graphics g)
         {
-
-
             g.DrawSprite(Sprite);
             base.Draw(g);
         }

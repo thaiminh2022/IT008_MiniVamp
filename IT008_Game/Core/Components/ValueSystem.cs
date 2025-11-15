@@ -7,8 +7,8 @@ namespace IT008_Game.Core.Components
     /// </summary>
     internal class ValueSystem<TType> where TType : INumber<TType>
     {
-        TType _maxValue;
-        TType _value;
+        protected TType _maxValue;
+        protected TType _value;
 
         public ValueSystem(TType maxValue)
         {

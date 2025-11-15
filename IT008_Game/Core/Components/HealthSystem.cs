@@ -32,6 +32,7 @@
                 return;
 
             base.SubstractValue(amount);
+            OnHealthChange?.Invoke(this, EventArgs.Empty);
 
             if (GetValue() <= 0f)
             {

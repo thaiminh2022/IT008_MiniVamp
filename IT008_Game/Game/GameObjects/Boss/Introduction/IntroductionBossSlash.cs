@@ -12,6 +12,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         float _speed = 500f;
         Player _player;
 
+        float _damage = 10f;
+
 
         public IntroductionBossSlash(Player player, Vector2 position)
         {
@@ -27,7 +29,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
             Sprite.Transform.Translate(-_speed * GameTime.DeltaTime, 0);
 
             if (Sprite.CollidesWith(_player.Sprite) && WillDestroyNextFrame == false) {
-                Console.WriteLine("Player damage");
+                _player.HealthSystem.SubstractValue(_damage);
                 Destroy();
             }
 

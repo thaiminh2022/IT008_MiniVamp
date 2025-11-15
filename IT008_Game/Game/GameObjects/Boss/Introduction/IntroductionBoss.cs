@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Introduction
 {
-    internal class IntroductionBoss : GameObject
+    internal class IntroductionBoss : GameObject, IBoss
     {
         enum Attacks
         {
@@ -77,6 +77,10 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
             timeBtwAttack = startTimeBtwAttack;
 
             Sprite.Play("idle");
+
+            BossHUD hud = new BossHUD(this);
+            Children.Add(hud);
+
         }
 
 
@@ -115,7 +119,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
                     else
                     {
                         Sprite.Play("attack");
-                        _willDoubleAttack = new Random().NextDouble() > 0.25;
+                        _willDoubleAttack = new Random().NextDouble() > 0.4;
                         Sprite.Transform.Position = new Vector2(Sprite.Transform.Position.X,
                             _player.Sprite.Transform.Position.Y);
 
