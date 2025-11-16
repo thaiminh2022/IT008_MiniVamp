@@ -1,4 +1,5 @@
 ﻿using IT008_Game.Core.Components;
+using IT008_Game.Core.Managers;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Permissions;
@@ -77,14 +78,24 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         }
         float HandleUpgrade(float current, PlayerUpgrade up)
         {
-            return up.Strat switch
+            if (up.Strat == UpgradeType.SubPercentage || up.Strat == UpgradeType.Subtraction)
             {
-                UpgradeType.Addition => current + up.Value,
-                UpgradeType.AddPercentage => current * (1 + up.Value / 100f),
-                UpgradeType.SubPercentage => current * (1 - up.Value / 100f),
-                UpgradeType.Subtraction => current - up.Value,
-                _ => throw new NotImplementedException(),
-            };
+                AudioManager.PlayDebuff();
+            }else
+            {
+                AudioManager.PlayDebuff();
+            }
+
+                return up.Strat switch
+                {
+                    UpgradeType.Addition => current + up.Value,
+                    UpgradeType.AddPercentage => current * (1 + up.Value / 100f),
+                    UpgradeType.SubPercentage => current * (1 - up.Value / 100f),
+                    UpgradeType.Subtraction => current - up.Value,
+                    _ => throw new NotImplementedException(),
+                };
+
+            
         }
     }
 }

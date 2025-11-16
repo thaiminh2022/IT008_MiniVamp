@@ -7,6 +7,8 @@
     {
         public event EventHandler? OnDead;
         public event EventHandler? OnHealthChange;
+        public event EventHandler? OnDamage;
+
 
         public bool IsDead => _value <= 0;
 
@@ -32,6 +34,7 @@
 
             base.SubstractValue(amount);
             OnHealthChange?.Invoke(this, EventArgs.Empty);
+            OnDamage?.Invoke(this, EventArgs.Empty);
 
             if (GetValue() <= 0f)
             {

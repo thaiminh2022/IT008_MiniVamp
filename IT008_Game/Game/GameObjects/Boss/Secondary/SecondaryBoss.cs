@@ -22,6 +22,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             BiteAttack,
             LimitPlayer,
             TwoWaySlash,
+            Death,
         }
         State _currentState;
         int _sameStateCount = 0;
@@ -66,7 +67,14 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             {
                 TotalColumn = 11,
                 TotalRow = 1,
-                FPS = 12,
+                FPS = 10,
+                Loop = false,
+            });
+
+            Sprite.AddAnimation("boss2/death.png", "death", new AnimationConfig
+            {
+                TotalColumn = 10,
+                TotalRow = 1,
                 Loop = false,
             });
 
@@ -81,6 +89,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             var hud = new BossHUD(HealthSystem, "P Daddy's Slime");
             Children.Add(hud);
+
+            AudioManager.PlayBossFight2Music();
         }
 
         public override void Update()
@@ -89,7 +99,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (HealthSystem.IsDead)
             {
-                Destroy();
+                _currentState = State.Death;
             }
 
             switch (_currentState)
@@ -112,6 +122,15 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                     Sprite.Play("slam");
                     TwoWaySlash();
                     break;
+                case State.Death:
+                    if (WillDestroyNextFrame)
+                        break;
+
+                    Sprite.Play("death");
+                    if (Sprite.AnimationFinished()) {
+                        Destroy();
+                    }
+                    break;
 
             }
 
@@ -121,6 +140,10 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
         private void TwoWaySlash()
         {
+            if (!_didSlamed)
+            {
+                AudioManager.PlayBubble();
+            }
             _didSlamed = true;
 
             if (_didSlamed && Sprite.AnimationFinished())
@@ -128,6 +151,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 var slash = new TwoWaySlash(Sprite.Transform.Position, _player);
                 Children.Add(slash);
                 _currentState = State.Idle;
+
+                AudioManager.PlaySlam();
             }
 
         }
@@ -162,6 +187,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 // impact
                 _didBite = true;
 
+                AudioManager.PlayBite();
+
                 if (HealthSystem.GetValueNormalized() <= .75f)
                 {
                     for (int i = 0; i < 5; i++)
@@ -190,7 +217,15 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         }
         private void SlamState()
         {
+            if (!_didSlamed)
+            {
+                AudioManager.PlayBubble();
+            }
+            
             _didSlamed = true;
+
+            
+
 
             if (_didSlamed && Sprite.AnimationFinished())
             {
@@ -203,6 +238,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 }
 
                 _currentState = State.Idle;
+                AudioManager.PlaySlam();
             }
         }
 
@@ -267,6 +303,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             State[] normalStates =
             [
                 State.SlamAttack,
+                State.SlamAttack,
                 State.BiteAttack,
                 State.BiteAttack,
                 State.BiteAttack,
@@ -310,7 +347,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             return Sprite;
         }
 
-        public void Damage(int damage)
+        public void Damage(float damage)
         {
             HealthSystem.SubstractValue(damage);
         }

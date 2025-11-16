@@ -65,6 +65,10 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             using var font = new Font("Segoe UI", 10, FontStyle.Bold);
             using var brush = new SolidBrush(Color.White);
             g.DrawString(levelStr, font, brush, new PointF(0, 25));
+
+            var style = _player.CanDash ? FontStyle.Bold : (FontStyle.Italic | FontStyle.Strikeout);
+            using var dashFont = new Font("Segoe UI", 10, style);
+            g.DrawString("Dash", dashFont, brush, new PointF(0, 50));
         }
 
         private void DrawHealthBar(Graphics g)

@@ -36,7 +36,6 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         public IntroductionBoss(Player player)
         {
             HealthSystem = new HealthSystem(500f);
-            HealthSystem.OnDead += HealthSystem_OnDead;
 
             Sprite = new AnimatedSprite2D();
 
@@ -59,6 +58,15 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
                 TotalRow = 1,
                 Loop = false,
             });
+
+            Sprite.AddAnimation("boss/hurt.png", "hurt", new AnimationConfig
+            {
+                TotalColumn = 4,
+                FPS = 4,
+                TotalRow = 1,
+                Loop = false,
+            });
+
             Sprite.Transform.Position = new Vector2(GameManager.VirtualWidth - 100f, GameManager.VirtualHeight / 2f);
             Sprite.Transform.Scale = new Vector2(-1, 1) * 3;
 
@@ -70,33 +78,40 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
             BossHUD hud = new BossHUD(HealthSystem, "Yamaguchi Epstein");
             Children.Add(hud);
 
-        }
+            AudioManager.PlayBossFight1Music();
 
-        private void HealthSystem_OnDead(object? sender, EventArgs e)
-        {
-            Destroy();
-        }
-
-        public override void OnDestroy()
-        {
-            HealthSystem.OnDead -= HealthSystem_OnDead;
-            base.OnDestroy();
         }
 
 
+        bool _playedDeadAnim = false;
         // Update
         public override void Update()
         {
-            HandleAttack();
+            HandleDead();
 
-            if (HealthSystem.GetValue() == 0)
-            {
-                Destroy();
-            }
+            if (!HealthSystem.IsDead) 
+                HandleAttack();
 
             // Keep this so its children will update
             base.Update();
             Sprite.Update();
+        }
+
+        private void HandleDead()
+        {
+            if (HealthSystem.IsDead)
+            {
+                if (!_playedDeadAnim)
+                {
+                    Sprite.Play("hurt");
+                    _playedDeadAnim = true;
+                }
+
+                if (Sprite.AnimationFinished())
+                {
+                    Destroy();
+                }
+            }
         }
 
         private void HandleAttack()
@@ -150,8 +165,8 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
                 else
                 {
                     timeBtwAttack = startTimeBtwAttack;
-
                 }
+                AudioManager.PlaySwordSlash();
             }
             else
             {
@@ -183,7 +198,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
             return Sprite;
         }
 
-        public void Damage(int damage)
+        public void Damage(float damage)
         {
             HealthSystem.SubstractValue(damage);
         }

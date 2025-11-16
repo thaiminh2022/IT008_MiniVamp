@@ -93,7 +93,6 @@ namespace IT008_Game
             var g = e.Graphics;
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.SmoothingMode = SmoothingMode.None;
-            g.Clear(Color.CornflowerBlue);   // background
             SceneManager.SceneDraw(g);
         }
     }

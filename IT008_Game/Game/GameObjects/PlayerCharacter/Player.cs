@@ -10,29 +10,37 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
     {
         public readonly Sprite2D Sprite;
 
+        bool _dashAvailablePlayed = false;
 
         private float _timeBtwAttack = 0;
         private float _startTimeBtwAttack => 1 / AttackSpeed;
         public float AttackSpeed { get; set; } = 2f;
         public float Speed { get;  set; } = 200f;
 
-        public float Damage { get; set; } = 10f;
+        public float Damage { get; set; } = 200f;
         public float MaxHealth { 
             get => HealthSystem.GetMaxValue();
             set => HealthSystem.SetMaxValue(value, true); 
         }
 
         public float _dashDistance = 100f; // How far the player should dash
-        public float DashCoolDown = 0.5f; // Time before dash can be used again
+        public float DashCoolDown = 3f; // Time before dash can be used again
+        public bool CanDash => _dashTimer <= 0;
+
         private float _dashTimer = 0f;
         private Vector2 _lastMoveDir = new Vector2(1, 0);
 
         public HealthSystem HealthSystem { get; private set; }
         public PlayerLevelSystem LevelSystem { get; private set; }
 
+
+        private float _damageSoundCooldown = 0.5f;
+
         public Player()
         {
             HealthSystem = new HealthSystem(100);
+            HealthSystem.OnDamage += HealthSystem_OnDamage;
+
             LevelSystem = new PlayerLevelSystem(100, this);
             Sprite = new(
                 AssetsBundle.LoadImageBitmap("dino.png")
@@ -44,9 +52,28 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             Children.Add(hud);
         }
 
+        private void HealthSystem_OnDamage(object? sender, EventArgs e)
+        {
+            if (_damageSoundCooldown <= 0)
+            {
+                AudioManager.PlayPlayerHit();
+                _damageSoundCooldown = 0.5f;
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            HealthSystem.OnDamage -= HealthSystem_OnDamage;
+            base.OnDestroy();
+        }
 
         public override void Update()
         {
+            if (_damageSoundCooldown > 0)
+            {
+                _damageSoundCooldown -= GameTime.DeltaTime;
+            }
+
             if (_timeBtwAttack <= 0)
             {
                 HandleShooting();
@@ -55,7 +82,6 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             {
                 _timeBtwAttack -= GameTime.DeltaTime;
             }
-            Console.WriteLine(_timeBtwAttack);
 
             HandleMoving();
             HandleDashing();
@@ -151,15 +177,23 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
 
                 _timeBtwAttack = _startTimeBtwAttack;
-                AudioManager.ShootSound.Play();
+                AudioManager.PlayShoot();
             }
         }
-
         private void HandleDashing()
         {
             // Cooldown on dash
             if (_dashTimer > 0)
+            {
                 _dashTimer -= GameTime.DeltaTime;
+                _dashAvailablePlayed = false;
+                return;
+            }
+
+            if (!_dashAvailablePlayed) {
+                AudioManager.PlayPlayerDashAvailable();
+                _dashAvailablePlayed = true;
+            }
 
             // Dash
             if (GameInput.GetKeyDown(Keys.F) && _dashTimer <= 0)
@@ -174,6 +208,8 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 Sprite.Transform.Translate(dashDir * _dashDistance);
                 _lastMoveDir = dashDir; // keep facing consistent
                 _dashTimer = DashCoolDown;
+
+                AudioManager.PlayPlayerDash();
             }
         }
 
@@ -187,9 +223,6 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
             {
                 _lastMoveDir = Vector2.Normalize(rawInput);
             }
-
-
-
 
             // Moving
             var moveVec = rawInput * Speed * GameTime.DeltaTime;
@@ -207,7 +240,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         private void SpawnExplosion()
         {
-            var explosion = new Explosion(Sprite.Transform.Position);
+            var explosion = new PlayerExplosion(Sprite.Transform.Position);
             if (SceneManager.CurrentScene is MainGameScene mg)
             {
                 mg.Children.Add(explosion); // or mg.BulletList.Add(explosion) if you want it managed there

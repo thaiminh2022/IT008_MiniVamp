@@ -1,6 +1,8 @@
 ﻿using IT008_Game.Core.Components;
+using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
+using Microsoft.VisualBasic.Devices;
 using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Secondary
@@ -15,6 +17,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
         Player _player;
 
+        bool playExploded = false;
         public SlamAttackProjectile(Player player)
         {
             _player = player;
@@ -51,9 +54,16 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                     Destroy();
                 }
 
+                if (!playExploded)
+                {
+                    AudioManager.PlayManaExplosion();
+                    playExploded = true;
+                }
+
                 Sprite.Play("whirl_explode");
                 if (Sprite.AnimationFinished())
                 {
+                    
                     Destroy();
                     dealDamage = true;
                 }

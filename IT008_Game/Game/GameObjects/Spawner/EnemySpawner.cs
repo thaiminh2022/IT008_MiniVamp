@@ -6,6 +6,8 @@ using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.EnemyTypes;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.Scenes;
+using Microsoft.VisualBasic.Devices;
+using NAudio.Wave;
 using System;
 using System.Numerics;
 
@@ -68,26 +70,26 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
         public EnemySpawner(Player _player)
         {
-            //var wave1 = new Wave([
-            //    new EnemyData(() => {
-            //        var enemy = new Enemy(_player);
-            //        enemy.Sprite.Transform.Position = GetRandomPostition();
-            //        return enemy;
-            //    }),
-            //    new EnemyData(() => {
-            //        var enemy = new Enemy_Normal(_player);
-            //        enemy.Sprite.Transform.Position = GetRandomPostition();
-            //        return enemy;
-            //    })
-            //], 10);
+            var wave1 = new Wave([
+                new EnemyData(() => {
+                    var enemy = new Enemy(_player);
+                    enemy.Sprite.Transform.Position = GetRandomPostition();
+                    return enemy;
+                }),
+                new EnemyData(() => {
+                    var enemy = new Enemy_Normal(_player);
+                    enemy.Sprite.Transform.Position = GetRandomPostition();
+                    return enemy;
+                })
+            ], 10);
 
-            //var wave2 = new Wave([
-            //    new EnemyData(() => {
-            //            var enemy = new Enemy(_player);
-            //            enemy.Sprite.Transform.Position = GetRandomPostition();
-            //            return enemy;
-            //        })
-            //], 10);
+            var wave2 = new Wave([
+                new EnemyData(() => {
+                        var enemy = new Enemy(_player);
+                        enemy.Sprite.Transform.Position = GetRandomPostition();
+                        return enemy;
+                    })
+            ], 10);
 
             // every boss weight is 100
             var wave3 = new Wave([
@@ -104,8 +106,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
             // Setup wave data here
             _waves = [
-                //wave1,
-                //wave2,
+                wave1,
+                wave2,
                 wave3,
                 wave4,
             ];
@@ -126,6 +128,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
                 _currentState = SpawnerState.Spawning;
                 Console.WriteLine("New wave caled");
+
+                AudioManager.PlayFightingMusic();
             }
             else
             {

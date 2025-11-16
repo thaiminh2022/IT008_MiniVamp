@@ -10,14 +10,16 @@ namespace IT008_Game.Core.Managers
     {
         static Form? _mainForm;
         public static GameScene? CurrentScene { get; private set; }
-        static Dictionary<string, GameScene> _sceneData = [];
+        public static string? CurrentSceneName { get; private set; }
+
+        static Dictionary<string, Func<GameScene>> _sceneData = [];
 
         public static void Setup(Form f)
         {
             _mainForm = f;
-            _sceneData = new Dictionary<string, GameScene>{
-                { MainGameScene.Name, new MainGameScene() },
-                { MainMenuScene.Name, new MainMenuScene() },
+            _sceneData = new(){
+                { MainGameScene.Name, () => new MainGameScene() },
+                { MainMenuScene.Name, () => new MainMenuScene() },
             };
         }
 
@@ -41,8 +43,8 @@ namespace IT008_Game.Core.Managers
             if (_mainForm == null) return false;
 
             // scene name does not exits, not loading lol
-            var scene = _sceneData[sceneName];
-            if (scene is null)
+            var sceneFunc = _sceneData[sceneName];
+            if (sceneFunc is null)
             {
                 Console.WriteLine("Scene does not exists");
                 return false;
@@ -52,12 +54,15 @@ namespace IT008_Game.Core.Managers
             _mainForm.Controls.Clear();
             CurrentScene?.UnLoad();
 
+            var scene = sceneFunc();
             CurrentScene = scene;
+            CurrentSceneName = sceneName;
             CurrentScene.Load();
 
             _mainForm.Controls.AddRange([.. scene.Controls]);
             _mainForm.Text = sceneName;
             _mainForm.Focus();
+            _mainForm.Invalidate();
 
 
             return true;
@@ -65,16 +70,10 @@ namespace IT008_Game.Core.Managers
 
         public static void RestartCurrentScene()
         {
-            if (CurrentScene is null || _mainForm is null)
+            if (CurrentScene is null || _mainForm is null || CurrentSceneName is null)
                 return;
 
-            _mainForm.Controls.Clear();
-
-            CurrentScene.UnLoad();
-            CurrentScene.Load();
-
-            _mainForm.Controls.AddRange([.. CurrentScene.Controls]);
-            _mainForm.Focus();
+            ChangeScene(CurrentSceneName);
         }
     }
 

@@ -12,19 +12,22 @@ namespace IT008_Game.Game.Scenes
     {
         public static new string Name => "Game";
         
-        TableLayoutPanel? pauseMenu;
-        TableLayoutPanel? upgradeMenu;
+        TableLayoutPanel pauseMenu;
+        TableLayoutPanel upgradeMenu;
+        TableLayoutPanel lostMenu;
         Button? upBtn1, upBtn2, upBtn3;
 
-        Player? player;
-        public EnemySpawner? enemySpawner;
+        Player player;
+        public EnemySpawner enemySpawner;
+
+
 
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
 
         public GameObjectList EnemyBulletList { get; private set; } = [];
 
-        public override void Load()
+        public MainGameScene()
         {
             // We create the player, and enemies
             player = new();
@@ -41,10 +44,13 @@ namespace IT008_Game.Game.Scenes
 
             enemySpawner.NextWave();
 
-            DrawPauseMenu();
-            DrawUpgradeMenu();
-            player.LevelSystem.AddLevel();
+            pauseMenu = DrawPauseMenu();
+            upgradeMenu = DrawUpgradeMenu();
+            lostMenu = DrawLostMenu();
+            //player.LevelSystem.AddLevel();
+            AudioManager.PlayFightingMusic();
         }
+
 
         private void LevelSystem_LevelUp(object? sender, EventArgs e)
         {
@@ -98,11 +104,12 @@ namespace IT008_Game.Game.Scenes
             {
                 item.Destroy();
             }
+            AudioManager.StopAllAudio();
 
             base.UnLoad();
         }
 
-        private void DrawPauseMenu()
+        private TableLayoutPanel DrawPauseMenu()
         {
             // MENU
             pauseMenu = new TableLayoutPanel()
@@ -149,9 +156,11 @@ namespace IT008_Game.Game.Scenes
 
             pauseMenu.Controls.Add(flowLayout, 0, 1);
             Controls.Add(pauseMenu);
+
+            return pauseMenu;
         }
 
-        private void DrawUpgradeMenu()
+        private TableLayoutPanel DrawUpgradeMenu()
         {
             var width = 600;
             var height = 200;
@@ -209,6 +218,73 @@ namespace IT008_Game.Game.Scenes
 
             Controls.Add(upgradeMenu);
             upgradeMenu.Visible = false;
+
+            return upgradeMenu;
+        }
+
+        private TableLayoutPanel DrawLostMenu()
+        {
+            // MENU
+            lostMenu = new TableLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                Visible = false,
+                BackColor = Color.Transparent,
+
+            };
+            lostMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
+            lostMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 10));
+            lostMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 70));
+
+            lostMenu.Controls.Add(new Label()
+            {
+                Text = "GAMEOVER",
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 18)
+            }, 0, 0);
+
+            lostMenu.Controls.Add(new Label()
+            {
+                Text = "SCORE: ",
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 12)
+            }, 0, 1);
+
+
+            var continueBtn = new Button();
+            continueBtn.Text = "Restart";
+            continueBtn.Size = new Size(300, 50);
+            continueBtn.Click += (s, e) =>
+            {
+                ResumeGame();
+                lostMenu.Visible = false;
+                SceneManager.RestartCurrentScene();
+            };
+
+            var mainMenuButton = new Button();
+            mainMenuButton.Text = "Main Menu";
+            mainMenuButton.Size = new Size(300, 50);
+            mainMenuButton.Click += (s, e) =>
+            {
+                lostMenu.Visible = false;
+                ResumeGame();
+
+                SceneManager.ChangeScene(MainMenuScene.Name);
+            };
+
+            var flowLayout = new FlowLayoutPanel();
+            flowLayout.Anchor = AnchorStyles.None;
+            flowLayout.FlowDirection = FlowDirection.TopDown;
+            flowLayout.AutoSize = true;
+            flowLayout.Controls.AddRange([continueBtn, mainMenuButton]);
+
+            lostMenu.Controls.Add(flowLayout, 0, 2);
+            Controls.Add(lostMenu);
+            lostMenu.Visible = false;
+
+            return lostMenu;
         }
 
         private void SelectUpgrade3(object? sender, EventArgs e)
@@ -238,7 +314,6 @@ namespace IT008_Game.Game.Scenes
 
         public override void Update()
         {
-
             //anything to do with spawning waves
             enemySpawner.Update();
 
@@ -261,7 +336,7 @@ namespace IT008_Game.Game.Scenes
                     {
                         Console.WriteLine("hit");
                         bullet.Destroy();
-                        enemy.Damage(10);
+                        enemy.Damage(player.Damage);
                     }
                 }
             }
@@ -291,31 +366,33 @@ namespace IT008_Game.Game.Scenes
                 {
                     ResumeGame();
                 }
-                else
-                {
-                    PauseGame();
-                }
+
             }
 
-            if ((pauseMenu?.Visible ?? false) || (upgradeMenu?.Visible ?? false))
+            if ((pauseMenu?.Visible ?? false) || (upgradeMenu?.Visible ?? false) || (lostMenu?.Visible ?? false))
             {
                 GameTime.TimeScale = 0;
             }
 
+
         }
+        public void ShowGameOver()
+        {
+            lostMenu.Visible = true;
+        }
+
         public override void Draw(Graphics g)
         {
+            g.Clear(Color.CornflowerBlue);
+
+
             EnemyList.Draw(g);
+
             BulletList.Draw(g);
             EnemyBulletList.Draw(g);
-
             base.Draw(g);
         }
 
-        private void PauseGame()
-        {
-            GameTime.TimeScale = 0;
-        }
 
         private void ResumeGame()
         {
