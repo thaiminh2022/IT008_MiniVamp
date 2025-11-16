@@ -1,6 +1,7 @@
 ﻿using IT008_Game.Core.Components;
 using IT008_Game.Core.Managers;
 using IT008_Game.Core.System;
+using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.Scenes;
 using System.Numerics;
 
@@ -8,13 +9,14 @@ namespace IT008_Game.Game.GameObjects
 {
     internal sealed class HomingBullet : Bullet
     {
-        private float _homingStrength = 10f;       // how fast we turn towards target (bigger = snappier)
-        private Enemy? _lockTarget;
+        private float _homingStrength = 10f;   // how fast we turn towards target (bigger = snappier)
+        private IHomingTarget? _lockTarget;
         private Vector2 _moveVec;
 
-        public HomingBullet(Vector2 dir) :base(dir)
+        public HomingBullet(Vector2 dir) : base(dir)
         {
             _bulletSpeed = 500f;
+
             // Fallback direction if dir == zero
             _moveVec = dir.LengthSquared() > 0
                 ? Vector2.Normalize(dir)
@@ -27,9 +29,9 @@ namespace IT008_Game.Game.GameObjects
             AcquireTargetIfNeeded();
 
             // 2. Adjust direction towards target if we have one
-            if (_lockTarget is not null && IsEnemyValid(_lockTarget))
+            if (_lockTarget is not null && IsTargetValid(_lockTarget))
             {
-                Vector2 toTarget = _lockTarget.Sprite.Transform.Position - Sprite.Transform.Position;
+                Vector2 toTarget = _lockTarget.GetSprite().Transform.Position - Sprite.Transform.Position;
                 float distSq = toTarget.LengthSquared();
 
                 if (distSq > 1f) // avoid zero-length normalize
@@ -58,42 +60,42 @@ namespace IT008_Game.Game.GameObjects
         private void AcquireTargetIfNeeded()
         {
             // Already have a valid target -> keep it (no jitter from switching targets too often)
-            if (_lockTarget is not null && IsEnemyValid(_lockTarget))
+            if (_lockTarget is not null && IsTargetValid(_lockTarget))
                 return;
 
             if (SceneManager.CurrentScene is not MainGameScene mg)
                 return;
 
             float nearestDistSq = float.MaxValue;
-            Enemy? nearestEnemy = null;
+            IHomingTarget? nearestTarget = null;
 
+            // ---- 1) search normal enemies ----
             foreach (var obj in mg.EnemyList)
             {
-                if (obj is not Enemy enemy)
+                if (obj is not IHomingTarget target)
                     continue;
 
-                if (!IsEnemyValid(enemy))
+                if (!IsTargetValid(target))
                     continue;
 
-                Vector2 diff = enemy.Sprite.Transform.Position - Sprite.Transform.Position;
+                Vector2 diff = target.GetSprite().Transform.Position - Sprite.Transform.Position;
                 float distSq = diff.LengthSquared();
 
                 if (distSq < nearestDistSq)
                 {
                     nearestDistSq = distSq;
-                    nearestEnemy = enemy;
+                    nearestTarget = target;
                 }
             }
 
-            _lockTarget = nearestEnemy;
+
+            _lockTarget = nearestTarget;
         }
 
-        // Adjust this depending on your Enemy implementation
-        private static bool IsEnemyValid(Enemy enemy)
+        private static bool IsTargetValid(IHomingTarget target)
         {
-            // If you have IsDead/IsAlive or something, use it here.
-            // For now assume it's valid if sprite exists.
-            return enemy.Sprite is not null;
+            // Use your actual life/death logic
+            return target.GetIsAlive() && target.GetSprite() is not null;
         }
     }
 }

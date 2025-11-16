@@ -10,6 +10,9 @@ namespace IT008_Game.Game.GameObjects.EnemyTypes
 {
     internal class Enemy_Shotgun : Enemy
     {
+        public new int EnemyWeight = 7;
+
+
         private float StopDistance = 220f;
         private float SpreadDeg = 45f;
         private int PelletCount = 5;
@@ -17,7 +20,8 @@ namespace IT008_Game.Game.GameObjects.EnemyTypes
 
         public Enemy_Shotgun(Player target, float diff = 1f) : base(target, diff)
         {
-            Sprite = new Sprite2D(AssetsBundle.LoadImageBitmap("slime.png"));
+            HealthSystem = new HealthSystem(65 * diff);
+            Sprite = new Sprite2D(AssetsBundle.LoadImageBitmap("creep/slime.png"));
             Sprite.Transform.Scale = new Vector2(1.0f, 1.0f);
         }
 

@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Introduction
 {
-    internal class IntroductionBoss : GameObject, IEnemy
+    internal class IntroductionBoss : GameObject, IEnemy, IHomingTarget
     {
         enum Attacks
         {
@@ -35,7 +35,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         // Start function
         public IntroductionBoss(Player player)
         {
-            HealthSystem = new HealthSystem(4500f);
+            HealthSystem = new HealthSystem(2500);
 
             Sprite = new AnimatedSprite2D();
 
@@ -201,6 +201,11 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         public void Damage(float damage)
         {
             HealthSystem.SubstractValue(damage);
+        }
+
+        public bool GetIsAlive()
+        {
+            return !HealthSystem.IsDead;
         }
     }
 }
