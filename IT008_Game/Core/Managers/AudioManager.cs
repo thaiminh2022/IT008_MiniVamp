@@ -31,7 +31,7 @@ namespace IT008_Game.Core.Managers
         private static bool _musicLoop;
         private static string _currentMusicPath;
         private static bool _musicStopping;
-        private static float _musicVolume = 1.0f;   // 0..1
+        private static float _musicVolume = .7f;   // 0..1
         private static EventHandler<StoppedEventArgs>? _musicPlaybackHandler;
 
         // SFX 
@@ -134,7 +134,7 @@ namespace IT008_Game.Core.Managers
 
         private static IWavePlayer? _sfxOutput;
         private static MixingSampleProvider? _sfxMixer;
-        private static float _sfxVolume = 1.0f;     // master SFX volume 0..1
+        private static float _sfxVolume = .5f;     // master SFX volume 0..1
 
         public static float SfxVolume
         {
@@ -264,12 +264,12 @@ namespace IT008_Game.Core.Managers
         }
         public static void PlayBuff(float volume = 3f)
         {
-            var path = @$"sfx/DSGNSynth_BUFF-Generic Buff_HY_PC-001";
+            var path = @$"sfx/DSGNSynth_BUFF-Generic Buff_HY_PC-001.wav";
             PlaySfx(path, volume);
         }
         public static void PlayDebuff(float volume = 3f)
         {
-            var path = @$"sfx/DSGNSynth_BUFF-Failed Buff_HY_PC-003";
+            var path = @$"sfx/DSGNSynth_BUFF-Failed Buff_HY_PC-003.wav";
             PlaySfx(path, volume);
         }
         public static void PlayPlayerHit(float volume = 3f)
