@@ -251,7 +251,7 @@ namespace IT008_Game.Game.Scenes
 
             lostMenu.Controls.Add(new Label()
             {
-                Text = $"SCORE: {player.LevelSystem.Level}",
+                Text = $"BETTER LUCK NEXT TIME",
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Segoe UI", 12)

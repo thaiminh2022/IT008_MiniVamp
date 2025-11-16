@@ -98,6 +98,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
                 _waveDisplayNumber += 1;
 
+                AudioManager.PlayFightingMusic();
+
                 _currentState = SpawnerState.Spawning;
                 Console.WriteLine("New wave caled");
             }
