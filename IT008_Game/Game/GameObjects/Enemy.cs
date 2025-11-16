@@ -44,7 +44,11 @@ namespace IT008_Game.Game.GameObjects
         public Enemy(Player ChaseTarget, float DifficultyLvl = 1f)
         {
             _target = ChaseTarget.Sprite;
-            HealthSystem = new HealthSystem(10);
+            HealthSystem = new HealthSystem(MaxHealth * DifficultyLvl);
+            Damage = Damage * DifficultyLvl;
+
+            _target = ChaseTarget.Sprite;
+            CurrentHealth = MaxHealth;
             EnemyDiffLvl = DifficultyLvl;
 
             int size = 100;

@@ -33,8 +33,7 @@ namespace IT008_Game.Game.Scenes
             player = new();
 
             player.LevelSystem.LevelUp += LevelSystem_LevelUp;
-
-            enemySpawner = new EnemySpawner(player);
+            enemySpawner = new EnemySpawnerEndless(player);
 
 
             Children.AddRange([
@@ -391,6 +390,22 @@ namespace IT008_Game.Game.Scenes
             BulletList.Draw(g);
             EnemyBulletList.Draw(g);
             base.Draw(g);
+
+            if (waveTextTimer > 0)
+            {
+                var font = new Font("Segoe UI", 36, FontStyle.Bold);
+                var size = g.MeasureString(waveText, font);
+
+                g.DrawString(
+                    waveText,
+                    font,
+                    Brushes.White,
+                    (GameManager.VirtualWidth - size.Width) / 2,
+                    50
+                );
+
+                waveTextTimer -= GameTime.DeltaTime;
+            }
         }
 
 
@@ -398,5 +413,17 @@ namespace IT008_Game.Game.Scenes
         {
             GameTime.TimeScale = 1;
         }
+
+        private string waveText = "";
+        private float waveTextTimer = 0f;
+        private float waveTextDuration = 2f;
+
+        public void ShowWave(int wave)
+        {
+            waveText = $"WAVE {wave}";
+            waveTextTimer = waveTextDuration;
+        }
+
+       
     }
 }
