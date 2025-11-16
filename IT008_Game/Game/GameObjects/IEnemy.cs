@@ -7,5 +7,6 @@ namespace IT008_Game.Game.GameObjects
         public int GetWeight();
         public Sprite2D GetSprite();
         public void Damage(int damage);
+        void Shoot();
     }
 }
