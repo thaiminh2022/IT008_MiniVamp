@@ -12,7 +12,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         float _speed = 500f;
         Player _player;
 
-        float _damage = 10f;
+        float _damage = 30f;
 
 
         public IntroductionBossSlash(Player player, Vector2 position)

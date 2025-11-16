@@ -50,7 +50,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             {
                 if (Sprite.CollidesWith(_player.Sprite) && !WillDestroyNextFrame)
                 {
-                    _player.HealthSystem.SubstractValue(10f);
+                    _player.HealthSystem.SubstractValue(30f);
                     Destroy();
                 }
 

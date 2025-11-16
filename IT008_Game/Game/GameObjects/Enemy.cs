@@ -15,9 +15,8 @@ namespace IT008_Game.Game.GameObjects
         public HealthSystem HealthSystem;
 
 
-        public int Damage = 1;
-        public float MovementSpeed = 50f;
-        public short EnemyID = 0;
+        public float Damage = 10;
+        public float MovementSpeed = 100f;
 
         //spawn multiple enemies vs single hard enemy
         public int EnemyWeight = 2;
@@ -44,8 +43,8 @@ namespace IT008_Game.Game.GameObjects
         public Enemy(Player ChaseTarget, float DifficultyLvl = 1f)
         {
             _target = ChaseTarget.Sprite;
-            HealthSystem = new HealthSystem(10 * DifficultyLvl);
-            Damage = (int)(1 * DifficultyLvl);
+            HealthSystem = new HealthSystem(30 * DifficultyLvl);
+            Damage = (10 * DifficultyLvl);
 
             _target = ChaseTarget.Sprite;
             EnemyDiffLvl = DifficultyLvl;
@@ -66,11 +65,7 @@ namespace IT008_Game.Game.GameObjects
 
 
 
-        public void Damaged()
-        {
-            AudioManager.PlayHit();
-            HealthSystem.SubstractValue(1);
-        }
+
 
         public override void Draw(Graphics g)
         {
@@ -162,9 +157,10 @@ namespace IT008_Game.Game.GameObjects
             return Sprite;
         }
 
-        void IEnemy.Damage(float _)
+        void IEnemy.Damage(float damage)
         {
-            Damaged();
+            AudioManager.PlayHit();
+            HealthSystem.SubstractValue(damage);
         }
     }
 }

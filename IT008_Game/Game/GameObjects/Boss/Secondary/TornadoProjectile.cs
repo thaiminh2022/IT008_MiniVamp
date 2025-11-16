@@ -16,7 +16,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         Vector2 _moveToPosition;
 
         float _timeBtwNewPosition = 3;
-        float _startTimeBtwNewPosition = 3;
+        float _startTimeBtwNewPosition = 2;
 
         float totalAliveTime = 10f;
 
@@ -78,7 +78,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
 
             if (Sprite.CollidesWith(_player.Sprite))
             {
-                _player.HealthSystem.SubstractValue(3 * GameTime.DeltaTime);
+                _player.HealthSystem.SubstractValue(5 * GameTime.DeltaTime);
             }
 
 

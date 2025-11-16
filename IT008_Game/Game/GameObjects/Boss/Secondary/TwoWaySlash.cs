@@ -64,7 +64,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
             {
 
                 // Deal damage;
-                _player.HealthSystem.SubstractValue(10f);
+                _player.HealthSystem.SubstractValue(30f);
                 Destroy();
             }
 
