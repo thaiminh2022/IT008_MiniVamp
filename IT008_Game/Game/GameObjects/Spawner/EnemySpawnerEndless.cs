@@ -61,8 +61,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
             var wave4 = new Wave([SpawnEnemy, SpawnShotgun, SpawnEnemyShooterCircle], 55, 1f);
             var bosswave1 = new Wave([SpawnYamaguchi], 100);
             var wave6 = new Wave([SpawnShotgunPosion, SpawnShotgun, SpawnEnemyShooterCircle,SpawnEnemy], 65, 1f);
-            var wave7 = new Wave([SpawnShotgun, SpawnEnemyShooterCircle, SpawnEnemy], 75, 1.5f);
-            var wave8 = new Wave([SpawnShotgunPosion, SpawnShotgun, SpawnEnemyShooterCircle, SpawnEnemy], 90, 1.5f);
+            var wave7 = new Wave([SpawnShotgun, SpawnEnemyShooterCircle, SpawnEnemy], 75, 1f);
+            var wave8 = new Wave([SpawnShotgunPosion, SpawnShotgun, SpawnEnemyShooterCircle, SpawnEnemy], 90, 1f);
             var wave9 = new Wave([SpawnShotgunPosion, SpawnShotgun, SpawnEnemyShooterCircle, SpawnEnemy], 105, 2f);
             var bosswave = new Wave([SpawnDiddy], 100);
 
