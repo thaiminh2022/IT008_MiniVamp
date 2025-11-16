@@ -13,7 +13,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         private float _timeBtwAttack = 0;
         private float _startTimeBtwAttack => 1 / AttackSpeed;
-        public float AttackSpeed { get; set; } = 1f;
+        public float AttackSpeed { get; set; } = 2f;
         public float Speed { get;  set; } = 200f;
 
         public float Damage { get; set; } = 10f;

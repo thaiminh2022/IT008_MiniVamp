@@ -49,6 +49,9 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         public void SelectUpgrade(int idx)
         {
+            if (_currentUpgrades.Count == 0)
+                return;
+
             var up = _currentUpgrades[idx];
 
             switch (up.Option)
