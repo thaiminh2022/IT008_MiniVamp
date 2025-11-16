@@ -20,8 +20,6 @@ namespace IT008_Game.Game.Scenes
         Player player;
         public EnemySpawner enemySpawner;
 
-
-
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
 
@@ -357,6 +355,11 @@ namespace IT008_Game.Game.Scenes
 
 
             // UI THREAD
+            if (waveTextTimer > 0)
+            {
+                waveTextTimer -= GameTime.DeltaTime;
+            }
+
             if (pauseMenu is not null && GameInput.GetKeyDown(Keys.Escape))
             {
                 pauseMenu.Visible = !pauseMenu.Visible;
@@ -403,8 +406,6 @@ namespace IT008_Game.Game.Scenes
                     (GameManager.VirtualWidth - size.Width) / 2,
                     50
                 );
-
-                waveTextTimer -= GameTime.DeltaTime;
             }
         }
 

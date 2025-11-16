@@ -44,12 +44,15 @@ namespace IT008_Game.Game.GameObjects.Spawner
         protected int _currentWaveIdx = -1;
         protected float _timeBtwSpawn;
         protected int _currentWaveWorth;
-        protected int _waveDisplayNumber = 1;
+        protected int _waveDisplayNumber = 0;
 
-        protected List<Enemy> _enemiesToSpawn;
+        protected List<GameObject> _enemiesToSpawn;
 
         public EnemySpawner(Player player)
         {
+            _waves = [];
+            _enemiesToSpawn = [];
+            _rng = new Random();
             BuildSpawner(player);
         }
 
@@ -78,14 +81,14 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
             // every boss weight is 100
             var wave3 = new Wave([
-                 new EnemyData(() => {
-                        return new IntroductionBoss(_player);
+                 new EnemyData((x) => {
+                        return new IntroductionBoss(player);
                     })
             ], 100);
 
             var wave4 = new Wave([
-                 new EnemyData(() => {
-                        return new SecondaryBoss(_player);
+                 new EnemyData((x) => {
+                        return new SecondaryBoss(player);
                     })
             ], 100);
 
@@ -96,7 +99,6 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 wave3,
                 wave4,
             ];
-            _rng = new Random();
             _currentState = SpawnerState.Ready;
         }
 
@@ -108,7 +110,7 @@ namespace IT008_Game.Game.GameObjects.Spawner
             if (_currentWaveIdx + 1 < _waves.Count)
             {
                 _currentWaveIdx++;
-                _enemiesToSpawn = new List<Enemy>();
+                _enemiesToSpawn = [];
 
                 var wave = _waves[_currentWaveIdx];
                 _currentWaveWorth = wave.WaveWorth;
@@ -118,21 +120,23 @@ namespace IT008_Game.Game.GameObjects.Spawner
                     var enemyIdx = _rng.Next(wave.PossibleEnemies.Count);
                     var data = wave.PossibleEnemies[enemyIdx];
 
-                    var enemy = data(wave.DifficultyLevel) as Enemy;
+                    var enemy = data(wave.DifficultyLevel);
                     _enemiesToSpawn.Add(enemy);
 
-                    _currentWaveWorth -= enemy.EnemyWeight;
+                    if (enemy is IEnemy enemyData)
+                    {
+                        _currentWaveWorth -= enemyData.GetWeight();
+                    }
                 }
 
                 _timeBtwSpawn = wave.WaveTimeBtwSpawn;
                 _currentState = SpawnerState.Spawning;
-                Console.WriteLine("New wave caled");
 
                 AudioManager.PlayFightingMusic();
 
-                // 🔥 Tell scene to show wave text
                 if (SceneManager.CurrentScene is MainGameScene mg)
                     mg.ShowWave(_waveDisplayNumber);
+
                 _waveDisplayNumber += 1;
                 Console.WriteLine("New wave called");
             }
@@ -145,32 +149,32 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
         void HandleSpawning()
         {
-            if (_currentState != SpawnerState.Spawning)
+            if (_currentState == SpawnerState.Spawning)
             {
-                return;
 
-            if (_enemiesToSpawn.Count <= 0)
-            {
-                _currentState = SpawnerState.Waiting;
-                return;
-            }
+                if (_enemiesToSpawn.Count <= 0)
+                {
+                    _currentState = SpawnerState.Waiting;
+                    return;
+                }
 
-            var wave = _waves[_currentWaveIdx];
+                var wave = _waves[_currentWaveIdx];
 
-            if (_timeBtwSpawn <= 0)
-            {
-                var enemy = _enemiesToSpawn[0];
+                if (_timeBtwSpawn <= 0)
+                {
+                    var enemy = _enemiesToSpawn[0];
 
-                Children.Add(enemy);
-                if (SceneManager.CurrentScene is MainGameScene mg)
-                    mg.EnemyList.Add(enemy);
+                    Children.Add(enemy);
+                    if (SceneManager.CurrentScene is MainGameScene mg)
+                        mg.EnemyList.Add(enemy);
 
-                _enemiesToSpawn.RemoveAt(0);
-                _timeBtwSpawn = wave.WaveTimeBtwSpawn;
-            }
-            else
-            {
-                _timeBtwSpawn -= GameTime.DeltaTime;
+                    _enemiesToSpawn.RemoveAt(0);
+                    _timeBtwSpawn = wave.WaveTimeBtwSpawn;
+                }
+                else
+                {
+                    _timeBtwSpawn -= GameTime.DeltaTime;
+                }
             }
         }
 
