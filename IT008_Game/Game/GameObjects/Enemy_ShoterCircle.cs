@@ -41,7 +41,8 @@ namespace IT008_Game.Game.GameObjects.EnemyTypes
                 mg.EnemyBulletList.Add(b);
             }
 
-            AudioManager.ShootSound.Play();
+            AudioManager.PlayShoot();
+
         }
     }
 }

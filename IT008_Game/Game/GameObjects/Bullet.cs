@@ -17,7 +17,7 @@ namespace IT008_Game.Game.GameObjects
             _bulletSpeed = speed;
 
             Sprite = new Sprite2D(
-                AssetsBundle.LoadImageBitmap("dino.png")
+                AssetsBundle.LoadImageBitmap("bullet.png")
             );
             Sprite.Transform.Scale = new Vector2(0.3f, 0.3f);
             _moveVec = dir;
