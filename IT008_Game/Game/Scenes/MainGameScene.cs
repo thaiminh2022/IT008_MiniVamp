@@ -18,7 +18,7 @@ namespace IT008_Game.Game.Scenes
         Button? upBtn1, upBtn2, upBtn3;
 
         Player player;
-        public EnemySpawner enemySpawner;
+        public EnemySpawnerEndless enemySpawner;
 
         public GameObjectList EnemyList { get; private set; } = [];
         public GameObjectList BulletList { get; private set; } = [];
@@ -33,21 +33,28 @@ namespace IT008_Game.Game.Scenes
             player.LevelSystem.LevelUp += LevelSystem_LevelUp;
             enemySpawner = new EnemySpawnerEndless(player);
 
+            enemySpawner.OnWaveEnd += EnemySpawner_OnWaveEnd;
+
 
             Children.AddRange([
                 player,
                 enemySpawner,
             ]);
 
-            enemySpawner.NextWave();
 
             pauseMenu = DrawPauseMenu();
             upgradeMenu = DrawUpgradeMenu();
             lostMenu = DrawLostMenu();
-            //player.LevelSystem.AddLevel();
             AudioManager.PlayFightingMusic();
+
+
+            enemySpawner.NextWave();
         }
 
+        private void EnemySpawner_OnWaveEnd(object? sender, EventArgs e)
+        {
+            player.LevelSystem.AddLevel();
+        }
 
         private void LevelSystem_LevelUp(object? sender, EventArgs e)
         {
@@ -82,6 +89,7 @@ namespace IT008_Game.Game.Scenes
 
         public override void UnLoad()
         {
+            enemySpawner.OnWaveEnd -= EnemySpawner_OnWaveEnd;
             player.LevelSystem.LevelUp -= LevelSystem_LevelUp;
             upBtn1.Click -= SelectUpgrade1;
             upBtn2.Click -= SelectUpgrade3;
@@ -311,9 +319,6 @@ namespace IT008_Game.Game.Scenes
 
         public override void Update()
         {
-            //anything to do with spawning waves
-            enemySpawner.Update();
-
 
             EnemyList.Update();
             BulletList.Update();
@@ -424,7 +429,6 @@ namespace IT008_Game.Game.Scenes
             waveText = $"WAVE {wave}";
             waveTextTimer = waveTextDuration;
         }
-
        
     }
 }

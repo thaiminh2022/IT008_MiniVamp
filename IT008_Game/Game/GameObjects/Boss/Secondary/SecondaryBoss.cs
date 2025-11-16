@@ -48,7 +48,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         public SecondaryBoss(Player player)
         {
             Sprite = new AnimatedSprite2D();
-            HealthSystem = new HealthSystem(1500);
+            HealthSystem = new HealthSystem(4500);
             Sprite.AddAnimation("boss2/idle.png", "idle", new AnimationConfig
             {
                 TotalColumn = 6,
@@ -204,7 +204,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
                 if (dist <= radius)
                 {
                     // damage player
-                    _player.HealthSystem.SubstractValue(20f);
+                    _player.HealthSystem.SubstractValue(30f);
 
                 }
             }

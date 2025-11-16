@@ -16,8 +16,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
         private float _startTimeBtwAttack => 1 / AttackSpeed;
         public float AttackSpeed { get; set; } = 2f;
         public float Speed { get;  set; } = 200f;
-
-        public float Damage { get; set; } = 200f;
+        public float Damage { get; set; } = 10f;
         public float MaxHealth { 
             get => HealthSystem.GetMaxValue();
             set => HealthSystem.SetMaxValue(value, true); 
@@ -124,62 +123,67 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                 switch (LevelSystem.Level)
                 {
                     case 1:
-                        var mousePos = GameInput.MousePosition;
-
-                        // Player position
-                        Vector2 playerPos = Sprite.Transform.Position;
-
-                        // Direction vector
-                        Vector2 toMouse = mousePos - playerPos;
-                        if (toMouse.LengthSquared() > 0)
-                        {
-                            Vector2 dir = Vector2.Normalize(toMouse);
-                            SpawnBullet(dir);
-                        }
+                        var dir = GetDirToMouse();
+                        SpawnBullet(dir);
                         break;
+
                     case 2:
+                        dir = GetDirToMouse();
+                        SpawnBullet(dir, true);
+                        break;
+                    case 3:
                         // Shoot in 4 directions (up, down, left, right)
                         SpawnBullet(new Vector2(1, 0));
                         SpawnBullet(new Vector2(-1, 0));
                         SpawnBullet(new Vector2(0, 1));
                         SpawnBullet(new Vector2(0, -1));
                         break;
-
-                    case 3:
-                        // Shoot in 8 directions (like a star)
-                        for (int i = 0; i < 8; i++)
-                        {
-                            float angle = MathF.PI / 4 * i; // 45° increments
-                            var dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                            SpawnBullet(dir);
-                        }
-                        break;
-
                     case 4:
-                        // Shoot one homing bullet
-                        SpawnBullet(_lastMoveDir, homing: true);
-                        break;
-                    case 5:
                         SpawnBullet(Vector2.Normalize(new Vector2(1, 1)), homing: true);
                         SpawnBullet(Vector2.Normalize(new Vector2(-1, 1)), homing: true);
                         SpawnBullet(Vector2.Normalize(new Vector2(1, -1)), homing: true);
                         SpawnBullet(Vector2.Normalize(new Vector2(-1, -1)), homing: true);
                         break;
+                    case 5:
+                        // Shoot in 8 directions (like a star)
+                        for (int i = 0; i < 8; i++)
+                        {
+                            float angle = MathF.PI / 4 * i; // 45° increments
+                            var spawnDir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+                            SpawnBullet(spawnDir);
+                        }
+                        break;
                     case 6:
                         for (int i = 0; i < 8; i++)
                         {
                             float angle = MathF.PI / 4 * i; // 45° increments
-                            var dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                            SpawnBullet(dir, homing: true);
+                            var spawnDir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+                            SpawnBullet(spawnDir, homing: true);
                         }
                         break;
                 }
-
 
                 _timeBtwAttack = _startTimeBtwAttack;
                 AudioManager.PlayShoot();
             }
         }
+
+        private Vector2 GetDirToMouse()
+        {
+            var mousePos = GameInput.MousePosition;
+            // Player position
+            Vector2 playerPos = Sprite.Transform.Position;
+
+            // Direction vector
+            Vector2 toMouse = mousePos - playerPos;
+            if (toMouse.LengthSquared() > 0)
+            {
+                return Vector2.Normalize(toMouse);
+                
+            }
+            return Vector2.Zero;
+        }
+
         private void HandleDashing()
         {
             // Cooldown on dash

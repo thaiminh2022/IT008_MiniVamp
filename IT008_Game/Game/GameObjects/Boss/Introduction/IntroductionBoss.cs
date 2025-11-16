@@ -35,7 +35,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Introduction
         // Start function
         public IntroductionBoss(Player player)
         {
-            HealthSystem = new HealthSystem(500f);
+            HealthSystem = new HealthSystem(4500f);
 
             Sprite = new AnimatedSprite2D();
 

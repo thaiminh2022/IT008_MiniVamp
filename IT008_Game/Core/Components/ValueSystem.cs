@@ -48,7 +48,7 @@ namespace IT008_Game.Core.Components
             _maxValue = newMax;
             if (setValueToMax)
             {
-                _value = _maxValue;
+                ResetToFull();
             }
         }
 

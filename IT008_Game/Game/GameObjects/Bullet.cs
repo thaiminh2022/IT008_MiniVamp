@@ -8,7 +8,7 @@ namespace IT008_Game.Game.GameObjects
     internal class Bullet : GameObject
     {
         public readonly Sprite2D Sprite;
-        float _bulletSpeed;
+        protected float _bulletSpeed;
         Vector2 _moveVec;
 
         GameTimer timer1;
