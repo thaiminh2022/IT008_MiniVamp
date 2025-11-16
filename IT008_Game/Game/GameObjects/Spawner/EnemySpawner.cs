@@ -5,23 +5,15 @@ using IT008_Game.Game.GameObjects.EnemyTypes;
 using IT008_Game.Game.Scenes;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Security.Cryptography.Xml;
-
-
 
 namespace IT008_Game.Game.GameObjects.Spawner
 {
-    using static IT008_Game.Game.GameObjects.Spawner.EnemySpawner;
-    using EnemyData = Func<float,GameObject>;
+    using EnemyData = Func<float, GameObject>;
+
     internal class EnemySpawner : GameObject
     {
-        /// <summary>
-        /// Each wave have a worth, each CurrentWaitingEnemy have a cost.
-        /// When spawn an CurrentWaitingEnemy: worth - cost, 
-        /// </summary>
         public record Wave
         {
-            // Replace this with CurrentWaitingEnemy base class later
             public readonly List<EnemyData> PossibleEnemies;
             public int WaveWorth;
             public float WaveTimeBtwSpawn = 1f;
@@ -36,27 +28,11 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
         protected enum SpawnerState
         {
-            /// <summary>
-            /// Spawner waiting to be called next wave
-            /// </summary>
             Ready,
-
-            /// <summary>
-            /// Spawner spawing CurrentWaitingEnemy
-            /// </summary>
             Spawning,
-
-            /// <summary>
-            /// Spawner waiting for player to finish killing CurrentWaitingEnemy
-            /// </summary>
             Waiting,
-
-            /// <summary>
-            /// This happens when there are no more waves
-            /// </summary>
-            Finished,
+            Finished
         }
-
 
         protected List<Wave> _waves;
         protected Random _rng;
@@ -65,25 +41,25 @@ namespace IT008_Game.Game.GameObjects.Spawner
         protected int _currentWaveIdx = -1;
         protected float _timeBtwSpawn;
         protected int _currentWaveWorth;
+        protected int _waveDisplayNumber = 1;
 
         protected List<Enemy> _enemiesToSpawn;
 
-
-        public EnemySpawner(Player _player)
+        public EnemySpawner(Player player)
         {
-            SpawnerInternalBuilder(_player);
+            BuildSpawner(player);
         }
 
-        protected virtual void SpawnerInternalBuilder(Player _player)
+        protected virtual void BuildSpawner(Player player)
         {
             var wave1 = new Wave([
                 new EnemyData(x => {
-                    var enemy = new Enemy(_player,x);
+                    var enemy = new Enemy(player, x);
                     enemy.Sprite.Transform.Position = GetRandomPostition();
                     return enemy;
                 }),
                 new EnemyData(x => {
-                    var enemy = new Enemy_Normal(_player,x);
+                    var enemy = new Enemy_Normal(player, x);
                     enemy.Sprite.Transform.Position = GetRandomPostition();
                     return enemy;
                 })
@@ -91,17 +67,13 @@ namespace IT008_Game.Game.GameObjects.Spawner
 
             var wave2 = new Wave([
                 new EnemyData(x => {
-                        var enemy = new Enemy(_player,x);
-                        enemy.Sprite.Transform.Position = GetRandomPostition();
-                        return enemy;
-                    })
+                    var enemy = new Enemy(player, x);
+                    enemy.Sprite.Transform.Position = GetRandomPostition();
+                    return enemy;
+                })
             ], 10);
 
-            // Setup wave data here
-            _waves = [
-                wave1,
-                wave2
-            ];
+            _waves = [wave1, wave2];
             _rng = new Random();
             _currentState = SpawnerState.Ready;
         }
@@ -111,60 +83,61 @@ namespace IT008_Game.Game.GameObjects.Spawner
             if (_currentState != SpawnerState.Ready)
                 return;
 
-            if (_currentWaveIdx + 1 < _waves.Count) {
+            if (_currentWaveIdx + 1 < _waves.Count)
+            {
                 _currentWaveIdx++;
                 _enemiesToSpawn = new List<Enemy>();
 
-                _currentWaveWorth = _waves[_currentWaveIdx].WaveWorth;
+                var wave = _waves[_currentWaveIdx];
+                _currentWaveWorth = wave.WaveWorth;
 
                 while (_currentWaveWorth > 0)
                 {
-                    var wave = _waves[_currentWaveIdx];
                     var enemyIdx = _rng.Next(wave.PossibleEnemies.Count);
                     var data = wave.PossibleEnemies[enemyIdx];
 
-                    _enemiesToSpawn.Add(data(wave.DifficultyLevel) as Enemy);
-                    _currentWaveWorth -= _enemiesToSpawn.Last().EnemyWeight;
-                    _timeBtwSpawn = wave.WaveTimeBtwSpawn;
+                    var enemy = data(wave.DifficultyLevel) as Enemy;
+                    _enemiesToSpawn.Add(enemy);
+
+                    _currentWaveWorth -= enemy.EnemyWeight;
                 }
 
+                _timeBtwSpawn = wave.WaveTimeBtwSpawn;
                 _currentState = SpawnerState.Spawning;
-                Console.WriteLine("New wave caled");
+
+                // 🔥 Tell scene to show wave text
+                if (SceneManager.CurrentScene is MainGameScene mg)
+                    mg.ShowWave(_waveDisplayNumber);
+                _waveDisplayNumber += 1;
+                Console.WriteLine("New wave called");
             }
             else
             {
                 _currentState = SpawnerState.Finished;
-                Console.WriteLine("Wave finished");
+                Console.WriteLine("All waves finished.");
             }
         }
 
-        private Sprite2D Crosshair = new Sprite2D(
-             AssetsBundle.LoadImageBitmap("dino.png")
-        );
-       
         void HandleSpawning()
         {
-            if (_currentState != SpawnerState.Spawning) {
+            if (_currentState != SpawnerState.Spawning)
+                return;
+
+            if (_enemiesToSpawn.Count <= 0)
+            {
+                _currentState = SpawnerState.Waiting;
                 return;
             }
 
-            if (_enemiesToSpawn is null || _enemiesToSpawn.Count <= 0)
-            {
-                _currentState = SpawnerState.Waiting;
-                Console.WriteLine("Finished Spawning wave, waiting for player to clear enemies");
-                return;
-            }
-            var enemy = _enemiesToSpawn[0];
             var wave = _waves[_currentWaveIdx];
 
             if (_timeBtwSpawn <= 0)
-            {    
+            {
+                var enemy = _enemiesToSpawn[0];
+
                 Children.Add(enemy);
                 if (SceneManager.CurrentScene is MainGameScene mg)
-                {
-                   mg.EnemyList.Add(enemy);
-
-                }
+                    mg.EnemyList.Add(enemy);
 
                 _enemiesToSpawn.RemoveAt(0);
                 _timeBtwSpawn = wave.WaveTimeBtwSpawn;
@@ -172,14 +145,9 @@ namespace IT008_Game.Game.GameObjects.Spawner
             else
             {
                 _timeBtwSpawn -= GameTime.DeltaTime;
-
-
             }
-
         }
-        
 
-       
         public void TrackEnemy()
         {
             if (_currentState != SpawnerState.Waiting)
@@ -191,50 +159,34 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 NextWave();
             }
         }
+
         public override void Update()
         {
             HandleSpawning();
             TrackEnemy();
-
             base.Update();
         }
 
-        public Vector2 GetRandomPostition(float margin = -30f)
+        public Vector2 GetRandomPostition(float margin = -50f)
         {
             var width = GameManager.VirtualWidth;
             var height = GameManager.VirtualHeight;
 
             int side = _rng.Next(4);
 
-            switch (side) {
-                case 0: // Left
-                {
-                    var x = 0f - margin;
-                    var y = (float)(_rng.NextDouble() * height);
-                    return new Vector2(x, y);
-                }
-                case 1: // Right
-                {
-                    var x = width + margin;
-                    var y = (float)(_rng.NextDouble() * height);
-                    return new Vector2(x, y);
-                }
-                case 2: // Top
-                {
-                    var x = (float)(_rng.NextDouble() * width);
-                    var y = 0 - margin;
-                    return new Vector2(x, y);
-                }
-                case 3: // Bottom
-                {
-                    var x = (float)(_rng.NextDouble() * width);
-                    var y = height + margin;
-                    return new Vector2(x, y);
-                }
-                default:
-                    throw new NotImplementedException();
-            }
-
+            return side switch
+            {
+                0 => new Vector2(0 - margin, Rand(height)),
+                1 => new Vector2(width + margin, Rand(height)),
+                2 => new Vector2(Rand(width), 0 - margin),
+                3 => new Vector2(Rand(width), height + margin),
+                _ => throw new NotImplementedException(),
+            };
         }
+
+        private float Rand(float max) => (float)(_rng.NextDouble() * max);
+
+        
     }
+
 }

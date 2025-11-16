@@ -1,4 +1,6 @@
 ﻿using IT008_Game.Core.Components;
+using IT008_Game.Core.Managers;
+using IT008_Game.Game.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +21,7 @@ namespace IT008_Game.Game.GameObjects.Spawner
             
         }
 
-        protected override void SpawnerInternalBuilder(Player _player)
+        protected override void BuildSpawner(Player _player)
         {
             
             var wave = new Wave([
@@ -58,6 +60,13 @@ namespace IT008_Game.Game.GameObjects.Spawner
                     _timeBtwSpawn = wave.WaveTimeBtwSpawn;
                 }
 
+                if (SceneManager.CurrentScene is MainGameScene mg)
+                    mg.ShowWave(_waveDisplayNumber);
+                _waveDisplayNumber += 1;
+                
+
+                Console.WriteLine("New wave called");
+
                 _currentState = SpawnerState.Spawning;
                 Console.WriteLine("New wave caled");
             }
@@ -71,6 +80,8 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 }
                 Console.WriteLine("Wave finished");
                 NextWave();
+
+               
             }
         }
     }
