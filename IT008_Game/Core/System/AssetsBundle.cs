@@ -9,10 +9,5 @@ namespace IT008_Game.Core.System
             var image = Image.FromFile("Assets/" + path);
             return new Bitmap(image);
         }
-        public static SoundPlayer LoadSound(string path)
-        {
-            var sound = new SoundPlayer("Assets/" + path);
-            return sound;
-        }
     }
 }

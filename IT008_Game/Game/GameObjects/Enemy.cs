@@ -65,7 +65,7 @@ namespace IT008_Game.Game.GameObjects
 
         public void Damaged()
         {
-            AudioManager.HitSound.Play();
+            AudioManager.PlayHit();
             HealthSystem.SubstractValue(1);
         }
 
@@ -144,7 +144,7 @@ namespace IT008_Game.Game.GameObjects
                 mg.EnemyBulletList.Add(bullet);
 
             }
-            AudioManager.ShootSound.Play();
+            AudioManager.PlayShoot();
 
 
         }
@@ -159,7 +159,7 @@ namespace IT008_Game.Game.GameObjects
             return Sprite;
         }
 
-        void IEnemy.Damage(int _)
+        void IEnemy.Damage(float _)
         {
             Damaged();
         }

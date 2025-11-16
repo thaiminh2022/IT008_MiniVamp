@@ -12,7 +12,7 @@ namespace IT008_Game.Core.Components
 
         public GameObjectList Children = [];
 
-        public abstract void Load();
+        public virtual void Load() { }
         public virtual void UnLoad()
         {
             foreach (var child in Children)
