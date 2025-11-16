@@ -17,6 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\bullet.png" />
+    <None Remove="Assets\creep\poison_slime.png" />
+    <None Remove="Assets\creep\slime.png" />
+    <None Remove="Assets\creep\witch.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Assets\boss\" />
   </ItemGroup>
 

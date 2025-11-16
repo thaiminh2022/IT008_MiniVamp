@@ -39,7 +39,7 @@ namespace IT008_Game.Game.GameObjects
         public float AtkTime = 0.3f;
 
         //player target
-        private Sprite2D _target;
+        protected Sprite2D _target;
 
         public Enemy(Player ChaseTarget, float DifficultyLvl = 1f)
         {
@@ -120,7 +120,7 @@ namespace IT008_Game.Game.GameObjects
             Shoot();
         }
 
-        public void LinearChase()
+        public virtual void LinearChase()
         {
             Vector2 ChaseDirection;
 
@@ -136,7 +136,7 @@ namespace IT008_Game.Game.GameObjects
         }
 
 
-        public void Shoot()
+        public virtual void Shoot()
         {
 
             Vector2 ShootDirection = GameMathHelper.Rotate(AimingDirection, 0);
