@@ -20,6 +20,7 @@ namespace IT008_Game.Core.Managers
             _sceneData = new(){
                 { MainGameScene.Name, () => new MainGameScene() },
                 { MainMenuScene.Name, () => new MainMenuScene() },
+                { TutorialScene.Name, () => new TutorialScene() },
             };
         }
 

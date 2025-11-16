@@ -6,9 +6,6 @@ using IT008_Game.Game.GameObjects.Boss.Secondary;
 using IT008_Game.Game.GameObjects.EnemyTypes;
 using IT008_Game.Game.GameObjects.PlayerCharacter;
 using IT008_Game.Game.Scenes;
-using Microsoft.VisualBasic.Devices;
-using NAudio.Wave;
-using System;
 using System.Numerics;
 
 
