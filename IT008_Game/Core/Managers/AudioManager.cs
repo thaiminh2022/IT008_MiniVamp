@@ -104,6 +104,7 @@ namespace IT008_Game.Core.Managers
         public static void PlayBossFight2Music()
             => PlayMusicInternal(@"music/xDeviruchi - The Icy Cave.wav");
 
+        public static void PlayTutorialMusic() => PlayMusicInternal(@"music/xDeviruchi - Take some rest and eat some food.wav");
         public static void StopMusic()
         {
             _musicLoop = false;

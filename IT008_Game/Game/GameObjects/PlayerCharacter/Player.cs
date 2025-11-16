@@ -10,7 +10,7 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
     {
         public readonly Sprite2D Sprite;
 
-        bool _dashAvailablePlayed = false;
+        bool _dashAvailablePlayed = true;
 
         private float _timeBtwAttack = 0;
         private float _startTimeBtwAttack => 1 / AttackSpeed;
@@ -236,6 +236,9 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
             if (SceneManager.CurrentScene is MainGameScene mg)
                 mg.BulletList.Add(bullet);
+            else if (SceneManager.CurrentScene is TutorialScene ts) { 
+                ts.Children.Add(bullet);
+            }
         }
 
         private void SpawnExplosion()

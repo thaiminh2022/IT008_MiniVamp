@@ -29,11 +29,12 @@ namespace IT008_Game.Game.Scenes
 
             var label = new Label()
             {
-                Text = "THE GAME",
+                Text = "MINI VAMP",
                 TextAlign = ContentAlignment.MiddleCenter,
                 BackColor = Color.Transparent,
+                ForeColor = Color.Violet,
                 Dock = DockStyle.Fill,
-                Font = new Font("Segoe UI", 18)
+                Font = new Font("Segoe UI", 24, FontStyle.Bold)
             };
 
             var flow = new FlowLayoutPanel()
@@ -53,7 +54,87 @@ namespace IT008_Game.Game.Scenes
             };
             goToGameButton.Click += (_, _) => SceneManager.ChangeScene(MainGameScene.Name);
 
-            flow.Controls.Add(goToGameButton);
+            var tutorialBtn = new Button
+            {
+                Text = "Tutorial",
+                Size = new Size(300, 50),
+                Font = new Font("Segoe UI", 15),
+                TextAlign = ContentAlignment.MiddleCenter,
+            };
+            tutorialBtn.Click += (_, _) => SceneManager.ChangeScene(TutorialScene.Name);
+
+            var volumeGroup = new TableLayoutPanel
+            {
+                Width = 300,
+                Height = 100,
+                ColumnCount = 2,
+                RowCount = 2,
+            };
+
+            volumeGroup.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            volumeGroup.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+
+
+            var musicLabel = new Label
+            {
+                Text = "Music",
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                Width = 100,
+                Height = 50,
+            };
+            var musicVolume = new TrackBar()
+            {
+                Minimum = 0,
+                Maximum = 100,
+                Value = (int)(AudioManager.MusicVolume * 100),
+                Width = 200,
+                Height = 50,
+                TickStyle = TickStyle.None,
+                SmallChange = 1,
+                LargeChange = 10,
+            };
+            musicVolume.Scroll += (_, _) =>
+            {
+                float volume = musicVolume.Value / 100f;
+                AudioManager.MusicVolume = volume;
+            };
+
+            volumeGroup.Controls.Add(musicLabel);
+            volumeGroup.Controls.Add(musicVolume, 1, 0);
+
+            var sfxLabel = new Label
+            {
+                Text = "Sound Effects",
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                Width = 100,
+                Height = 50,
+            };
+            var sfxVolume = new TrackBar()
+            {
+                Minimum = 0,
+                Maximum = 100,
+                Value = (int)(AudioManager.SfxVolume * 100),
+                Width = 200,
+                Height = 50,
+                TickStyle = TickStyle.None,
+                SmallChange = 1,
+                LargeChange = 10,
+            };
+            sfxVolume.Scroll += (_, _) =>
+            {
+                float volume = sfxVolume.Value / 100f;
+                AudioManager.SfxVolume = volume;
+            };
+
+            volumeGroup.Controls.Add(sfxLabel, 0, 1);
+            volumeGroup.Controls.Add(sfxVolume, 1, 1);
+
+
+            flow.Controls.AddRange([goToGameButton, tutorialBtn, volumeGroup]);
 
 
             table.Controls.Add(label, 0, 0);
