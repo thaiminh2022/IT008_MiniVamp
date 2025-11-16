@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects
 {
-    internal class Enemy : GameObject, IEnemy
+    internal class Enemy : GameObject, IEnemy, IHomingTarget
     {
         public Sprite2D Sprite;
 
@@ -19,7 +19,7 @@ namespace IT008_Game.Game.GameObjects
         public float MovementSpeed = 100f;
 
         //spawn multiple enemies vs single hard enemy
-        public int EnemyWeight = 2;
+        public int EnemyWeight = 5;
         public float EnemyDiffLvl = 1;
 
         //AimingDirection
@@ -43,7 +43,7 @@ namespace IT008_Game.Game.GameObjects
         public Enemy(Player ChaseTarget, float DifficultyLvl = 1f)
         {
             _target = ChaseTarget.Sprite;
-            HealthSystem = new HealthSystem(30 * DifficultyLvl);
+            HealthSystem = new HealthSystem(35 * DifficultyLvl);
             Damage = (10 * DifficultyLvl);
 
             _target = ChaseTarget.Sprite;
@@ -161,6 +161,11 @@ namespace IT008_Game.Game.GameObjects
         {
             AudioManager.PlayHit();
             HealthSystem.SubstractValue(damage);
+        }
+
+        public bool GetIsAlive()
+        {
+            return !HealthSystem.IsDead;
         }
     }
 }

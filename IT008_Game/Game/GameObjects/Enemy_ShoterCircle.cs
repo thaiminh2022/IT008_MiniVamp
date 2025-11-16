@@ -9,13 +9,16 @@ namespace IT008_Game.Game.GameObjects.EnemyTypes
 {
     internal class Enemy_ShooterCircle : Enemy
     {
+        public new int EnemyWeight = 8;
+
         private readonly int BulletCount = 12;
         private readonly float BulletSpeed = 220f;
 
         public Enemy_ShooterCircle(Player target, float diff = 1f)
             : base(target, diff)
         {
-            Sprite = new Sprite2D(AssetsBundle.LoadImageBitmap("witch.png"));
+            HealthSystem = new HealthSystem(80 * diff);
+            Sprite = new Sprite2D(AssetsBundle.LoadImageBitmap("creep/witch.png"));
             Sprite.Transform.Scale = new Vector2(0.9f, 0.9f);
         }
 

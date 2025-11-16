@@ -20,10 +20,11 @@ namespace IT008_Game.Game.GameObjects.Spawner
             public float WaveTimeBtwSpawn = 1f;
             public float DifficultyLevel = 1f;
 
-            public Wave(List<EnemyData> possibleEnemies, int waveWorth)
+            public Wave(List<EnemyData> possibleEnemies, int waveWorth, float timeBtwSpawn = 1f)
             {
                 PossibleEnemies = possibleEnemies;
                 WaveWorth = waveWorth;
+                WaveTimeBtwSpawn = timeBtwSpawn;
             }
         }
 
@@ -164,6 +165,17 @@ namespace IT008_Game.Game.GameObjects.Spawner
                 3 => new Vector2(Rand(width), height + margin),
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        public Vector2 GetRandomPosInsideScreen(int margin = 50)
+        {
+            int width = GameManager.VirtualWidth;
+            int height = GameManager.VirtualHeight;
+
+            var x = _rng.Next(margin, width - margin);
+            var y = _rng.Next(margin, height - margin);
+
+            return new Vector2(x, y);
         }
 
         private float Rand(float max) => (float)(_rng.NextDouble() * max);

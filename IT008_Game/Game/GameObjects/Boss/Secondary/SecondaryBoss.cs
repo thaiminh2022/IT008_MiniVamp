@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace IT008_Game.Game.GameObjects.Boss.Secondary
 {
-    internal class SecondaryBoss : GameObject, IEnemy
+    internal class SecondaryBoss : GameObject, IEnemy, IHomingTarget
     {
         public readonly AnimatedSprite2D Sprite;
         private readonly Player _player;
@@ -48,7 +48,7 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         public SecondaryBoss(Player player)
         {
             Sprite = new AnimatedSprite2D();
-            HealthSystem = new HealthSystem(4500);
+            HealthSystem = new HealthSystem(3500);
             Sprite.AddAnimation("boss2/idle.png", "idle", new AnimationConfig
             {
                 TotalColumn = 6,
@@ -350,6 +350,11 @@ namespace IT008_Game.Game.GameObjects.Boss.Secondary
         public void Damage(float damage)
         {
             HealthSystem.SubstractValue(damage);
+        }
+
+        public bool GetIsAlive()
+        {
+            return !HealthSystem.IsDead;
         }
     }
 }

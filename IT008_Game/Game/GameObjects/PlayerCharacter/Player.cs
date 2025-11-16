@@ -116,7 +116,6 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
 
         private void HandleShooting()
         {
-
             // Shooting
             if (GameInput.GetKeyDown(Keys.Space) || GameInput.GetMouseButtonDown(MouseButtons.Left))
             {
@@ -139,12 +138,6 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                         SpawnBullet(new Vector2(0, -1));
                         break;
                     case 4:
-                        SpawnBullet(Vector2.Normalize(new Vector2(1, 1)), homing: true);
-                        SpawnBullet(Vector2.Normalize(new Vector2(-1, 1)), homing: true);
-                        SpawnBullet(Vector2.Normalize(new Vector2(1, -1)), homing: true);
-                        SpawnBullet(Vector2.Normalize(new Vector2(-1, -1)), homing: true);
-                        break;
-                    case 5:
                         // Shoot in 8 directions (like a star)
                         for (int i = 0; i < 8; i++)
                         {
@@ -153,12 +146,17 @@ namespace IT008_Game.Game.GameObjects.PlayerCharacter
                             SpawnBullet(spawnDir);
                         }
                         break;
-                    case 6:
-                        for (int i = 0; i < 8; i++)
+                    case 5 or 6 or 7 or 8:
+                        SpawnBullet(Vector2.Normalize(new Vector2(1, 1)), homing: true);
+                        SpawnBullet(Vector2.Normalize(new Vector2(-1, 1)), homing: true);
+                        break;
+                    case 9:
+                    default:
+                        for (int i = 0; i < 4; i++)
                         {
                             float angle = MathF.PI / 4 * i; // 45° increments
                             var spawnDir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                            SpawnBullet(spawnDir, homing: true);
+                            SpawnBullet(spawnDir, true);
                         }
                         break;
                 }
